@@ -38,17 +38,16 @@ class Index extends Component {
 
     render() {
         var Logout=()=>{
-            debugger
             userSession = {};
             localStorage.clear();
         }
-        debugger
+        
         const userValue = localStorage.getItem('User');
         //localStorage.clear();
         var userSession = {};
         let ddlMenu;
         let cartItemsCount = 0;
-        debugger
+        
         if (userValue === undefined || userValue === null) {
             userSession = undefined
         }

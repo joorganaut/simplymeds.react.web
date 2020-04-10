@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+//import config from "do"
+import Axios from 'axios'
 import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import { useHistory } from 'react-router-dom';
 import "./Login/css/main.css";
@@ -25,17 +27,33 @@ import LoginBackground from "./Login/images/bg-01.jpg"
 export default function Login(props) {
   var userSession = {};
   function handleSubmit(event) {
-    //event.preventDefault();
-    userSession = {
-      isLoggedIn : true,
-      Name : 'Osazee Joe Igbinosun',
-      Email: "",
-      Cart :  25
+    event.preventDefault();
+    var data = {
+      Username : email,
+      Password : password
+    }
+    var result = {}
+    try{
+    Axios.post(process.env.REACT_APP_MIDDLEWARE+'/api/Login', data)
+    .then(res=>{
+        result = res;
+        userSession = {
+          isLoggedIn : true,
+          Name : result.data.record.Name,
+          Email: "",
+          Cart :  25
+      }
+      debugger
+      localStorage.setItem('User', JSON.stringify(userSession));
+      history.push('/')
+    }).error(err=>{
+
+    })
   }
-  debugger
-  localStorage.setItem('User', JSON.stringify(userSession));
-  history.push('/')
-  return true;
+  catch(error)
+  {
+    result = error.message;
+  }
 }
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -60,20 +78,20 @@ export default function Login(props) {
     </span>
         <div controlId="email" bsSize="medium" className="wrap-input100 validate-input m-b-20">
         <div className="wrap-input100 validate-input m-b-20" data-validate="Enter username or email">
-                    <input className="input100" type="text" name="username" placeholder="username or email"></input>
+                    <input className="input100" type="text" name="username" onChange={e => setEmail(e.target.value)} value={email} placeholder="username or email"></input>
                     <span className="focus-input100"></span>
                 </div>
         </div>
         <div controlId="password" bsSize="medium" className="wrap-input100 validate-input m-b-20">
          
                 <div className="wrap-input100 validate-input m-b-25" data-validate="Enter password">
-                    <input className="input100" type="password" name="pass" placeholder="password"></input>
+                    <input className="input100" type="password" name="password" onChange={e => setPassword(e.target.value)} value={password} placeholder="password"></input>
                     <span className="focus-input100"></span>
                 </div>
         </div>
         <div className="container-login100-form-btn">
         <Button block bsSize="large" type="submit" 
-        className="btn login100-form-btn" value="Sign-in" onClick={validateForm()} >
+        className="btn login100-form-btn" value="Sign-in" disabled={!validateForm()} >
           Sign-in
         </Button>
                 </div>
