@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Axios from 'axios'
 import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import { useHistory } from 'react-router-dom';
+import swal from 'sweetalert';
 import "./Login/css/main.css";
 import "./Login/css/util.css";
 import "./Login/vendor/bootstrap/css/bootstrap.min.css";
@@ -50,7 +51,14 @@ export default function Login(props) {
         }
         else
         {
-            alert(result.data.Message);
+          swal({
+            title: "Error!",
+            text: "Invalid Login Credentials",
+            icon: "error",
+            timer: 2000,
+            button: false
+          })
+            //alert(result.data.Message);
         }
     }).error(err=>{
 
@@ -97,7 +105,7 @@ export default function Login(props) {
         </div>
         <div className="container-login100-form-btn">
         <Button block bsSize="large" type="submit" 
-        className="btn login100-form-btn" value="Sign-in" disabled={!validateForm()} >
+        className="login100-form-btn" value="Sign-in" disabled={!validateForm()} >
           Sign-in
         </Button>
                 </div>
