@@ -37,15 +37,21 @@ export default function Login(props) {
     Axios.post(process.env.REACT_APP_MIDDLEWARE+'/api/Login', data)
     .then(res=>{
         result = res;
-        userSession = {
-          isLoggedIn : true,
-          Name : result.data.record.Name,
-          Email: "",
-          Cart :  25
-      }
-      debugger
-      localStorage.setItem('User', JSON.stringify(userSession));
-      history.push('/')
+        if (result.data.Code === '00' && result.data.IsAuthenticated) {
+          userSession = {
+            isLoggedIn: result.data.IsAuthenticated,
+            Name: result.data.record.Name,
+            Email: "",
+            Cart: 25
+          }
+          debugger
+          localStorage.setItem('User', JSON.stringify(userSession));
+          history.push('/')
+        }
+        else
+        {
+            alert(result.data.Message);
+        }
     }).error(err=>{
 
     })
