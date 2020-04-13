@@ -18,16 +18,7 @@ import "./Login/vendor/css-hamburgers/hamburgers.min.css";
 import "./Login/vendor/animsition/css/animsition.min.css";
 import "./Login/vendor/select2/select2.min.css";
 import "./Login/vendor/daterangepicker/daterangepicker.css";
-import LoginBackground from "./Login/images/bg-01.jpg"
-/*<link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
-<!--===============================================================================================-->	
-	<link rel="stylesheet" type="text/css" href="vendor/css-hamburgers/hamburgers.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/animsition/css/animsition.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
-<!--===============================================================================================-->	
-	<link rel="stylesheet" type="text/css" href="vendor/daterangepicker/daterangepicker.css"> */
+import LoginBackground from "./Login/images/bg-01.jpg";
 const FullNameFieldName = 'fullName';
 const EmailAddressFieldName = 'emailAddress';
 const MobilePhoneNumberFieldName = 'mobilePhoneNumber';
@@ -95,7 +86,7 @@ class SignUp extends Component {
                 fieldValidationErrors.fullName = fullNameValid ? '' : FullNameInvalidErrorMessage;
                 break;
             case EmailAddressFieldName:
-                emailAddressValid = value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
+                emailAddressValid = value.trim().match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
                 fieldValidationErrors.emailAddress = emailAddressValid ? '' : EmailAddressInvalidErrorMessage;
                 break;
             case MobilePhoneNumberFieldName:
@@ -155,8 +146,8 @@ class SignUp extends Component {
                 FirstName: this.state.fullName.split(' ')[0],
                 LastName: this.state.fullName.split(' ')[1],
                 FullName: this.state.fullName,
-                Email: this.state.emailAddress,
-                Username: this.state.emailAddress,
+                Email: this.state.emailAddress.trim(),
+                Username: this.state.emailAddress.trim(),
                 MobilePhoneNumber: this.state.mobilePhoneNumber,
                 Password: this.state.password,
             };

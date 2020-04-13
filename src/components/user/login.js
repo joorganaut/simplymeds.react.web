@@ -15,15 +15,6 @@ import "./Login/vendor/animsition/css/animsition.min.css";
 import "./Login/vendor/select2/select2.min.css";
 import "./Login/vendor/daterangepicker/daterangepicker.css";
 import LoginBackground from "./Login/images/bg-01.jpg"
-/*<link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
-<!--===============================================================================================-->	
-	<link rel="stylesheet" type="text/css" href="vendor/css-hamburgers/hamburgers.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/animsition/css/animsition.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
-<!--===============================================================================================-->	
-	<link rel="stylesheet" type="text/css" href="vendor/daterangepicker/daterangepicker.css"> */
 
 class Login extends Component{
   constructor(props){
@@ -116,7 +107,7 @@ render(){
                     <input className="input100" type="text" name="email" 
                     onChange={this.handleUserInput} 
                     value={this.state.email} 
-                    placeholder="username or email"></input>
+                    placeholder="email"></input>
                     <span className="focus-input100"></span>
                 </div>
         </div>
@@ -146,13 +137,16 @@ render(){
                 } > 
                 </Button> 
                 </div>
-                </div>
                 <div className="text-center p-t-57 p-b-20">
                     <a href="/signup" className="txt2 hov1">
                         or Sign Up
+                    </a> <br />
+                    <a href="/signup" className="txt2 hov1">
+                        forgot your password?
                     </a>
                 </div>
-
+                </div>
+               
         
       </form>
       </div>
