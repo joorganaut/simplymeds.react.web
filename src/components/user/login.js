@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { Component } from "react";
 //import config from "do"
 import Axios from 'axios'
-import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
-import { useHistory } from 'react-router-dom';
+import { Redirect } from 'react-router-dom'
+import Button from './Button'
 import swal from 'sweetalert';
 import "./Login/css/main.css";
 import "./Login/css/util.css";
@@ -25,29 +25,48 @@ import LoginBackground from "./Login/images/bg-01.jpg"
 <!--===============================================================================================-->	
 	<link rel="stylesheet" type="text/css" href="vendor/daterangepicker/daterangepicker.css"> */
 
-export default function Login(props) {
-  var userSession = {};
-  function handleSubmit(event) {
+class Login extends Component{
+  constructor(props){
+    super(props)
+    this.state={
+      email : '',
+      password : '',
+      redirect : false,
+      redirectPath : '',
+      formValid : true
+    }
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  userSession = {};
+  handleUserInput=(event)=>{
+    var name = event.target.name;
+    var value = event.target.value;
+    this.setState({[name] : value})
+  }
+  handleSubmit(event) {
     event.preventDefault();
     var data = {
-      Username : email,
-      Password : password
+      Username : this.state.email,
+      Password : this.state.password
     }
     var result = {}
     try{
     Axios.post(process.env.REACT_APP_MIDDLEWARE+'/api/Login', data)
     .then(res=>{
         result = res;
-        if (result.data.Code === '00' && result.data.IsAuthenticated) {
-          userSession = {
-            isLoggedIn: result.data.IsAuthenticated,
+        if (result.data.Code === '00') {
+          result = {
+            IsLoggedIn: true,
             Name: result.data.record.Name,
-            Email: "",
-            Cart: 25
+            ID: result.data.record.ID,
+            Roles: result.data.record.Roles,
+            MenuItems : []
           }
-          debugger
-          localStorage.setItem('User', JSON.stringify(userSession));
-          history.push('/')
+          //debugger
+          localStorage.setItem('User', JSON.stringify(result));
+          this.setState({redirect : true})
+          this.setState({redirectPath : '/'});
+          //history.push('/')
         }
         else
         {
@@ -60,8 +79,6 @@ export default function Login(props) {
           })
             //alert(result.data.Message);
         }
-    }).error(err=>{
-
     })
   }
   catch(error)
@@ -69,45 +86,66 @@ export default function Login(props) {
     result = error.message;
   }
 }
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  /*redirect : false,
+            redirectPath : '',*/
 
-  function validateForm() {
-    return email.length > 0 && password.length > 0;
+  validateForm() {
+    this.setState({formValid : this.email.length > 0 && this.password.length > 0});
   }
-  
-  
-  var history = useHistory();
-  
+  renderRedirect(path) 
+  {
+    return <Redirect to = {path}/>
+}
+render(){
+  if(this.state.redirect)
+  {
+    return (this.renderRedirect(this.redirectPath));
+  }
+  else{
   return (
-    
-
     <div className="Login container-login100" style={{backgroundImage: `url(${LoginBackground})`}} >
         <div className="wrap-login100 p-l-55 p-r-55 p-t-80 p-b-30" style={{backgroundColor:'white'}}>
       <form 
-      onSubmit={handleSubmit} 
+      onSubmit={this.handleSubmit} 
       className="login100-form validate-form">
       <span className="login100-form-title p-b-37">
                     Sign In 
     </span>
         <div controlId="email" bsSize="medium" className="wrap-input100 validate-input m-b-20">
         <div className="wrap-input100 validate-input m-b-20" data-validate="Enter username or email">
-                    <input className="input100" type="text" name="username" onChange={e => setEmail(e.target.value)} value={email} placeholder="username or email"></input>
+                    <input className="input100" type="text" name="email" 
+                    onChange={this.handleUserInput} 
+                    value={this.state.email} 
+                    placeholder="username or email"></input>
                     <span className="focus-input100"></span>
                 </div>
         </div>
         <div controlId="password" bsSize="medium" className="wrap-input100 validate-input m-b-20">
          
                 <div className="wrap-input100 validate-input m-b-25" data-validate="Enter password">
-                    <input className="input100" type="password" name="password" onChange={e => setPassword(e.target.value)} value={password} placeholder="password"></input>
+                    <input className="input100" type="password" name="password" 
+                    onChange={this.handleUserInput} 
+                     value={this.state.password} 
+                    placeholder="password"></input>
                     <span className="focus-input100"></span>
                 </div>
         </div>
         <div className="container-login100-form-btn">
-        <Button block bsSize="large" type="submit" 
-        className="login100-form-btn" value="Sign-in" disabled={!validateForm()} >
-          Sign-in
-        </Button>
+        <div className = "container-login100-form-btn" >
+                <Button type = {
+                    "submit"
+                }
+                id = {
+                    "submit-form-button"
+                }
+                text = {
+                    "Login"
+                }
+                disabled = {
+                    !this.state.formValid
+                } > 
+                </Button> 
+                </div>
                 </div>
                 <div className="text-center p-t-57 p-b-20">
                     <a href="/signup" className="txt2 hov1">
@@ -119,5 +157,8 @@ export default function Login(props) {
       </form>
       </div>
     </div>    
-  );
+  );}
+  }
+  
 }
+export default (Login)

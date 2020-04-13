@@ -1,13 +1,4 @@
 import React, {Component} from 'react'
-import 'jquery-ui/ui/widgets/sortable';
-import "./Pharmacy/fonts/icomoon/style.css";
-import "./Pharmacy/css/bootstrap.min.css";
-import "./Pharmacy/css/magnific-popup.css";
-import "./Pharmacy/css/jquery-ui.css";
-/*import "./Pharmacy/css/owl.carousel.min.css";*/
-import "./Pharmacy/css/owl.theme.default.min.css";
-import "./Pharmacy/css/aos.css";
-import "./Pharmacy/css/style.css";
 class Footer extends Component
 {
     render(){ return(

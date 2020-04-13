@@ -1,140 +1,384 @@
-import React, { useState } from "react";
-import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
-import $ from 'jquery';
-import 'jquery-ui/ui/widgets/sortable';
-import "./Signup/vendor/mdi-font/css/material-design-iconic-font.min.css";
-import "./Signup/vendor/font-awesome-4.7/css/font-awesome.min.css";
-import "./Signup/vendor/select2/select2.min.css";
-import "./Signup/vendor/datepicker/daterangepicker.css";
-import "./Signup/css/main.css";
-import "../master/Pharmacy/fonts/icomoon/style.css";
-import "../master/Pharmacy/css/bootstrap.min.css";
-import "../master/Pharmacy/css/magnific-popup.css";
-import "../master/Pharmacy/css/jquery-ui.css";
-// import "../master/Pharmacy/css/owl.carousel.min.css";
-import "../master/Pharmacy/css/owl.theme.default.min.css";
-import "../master/Pharmacy/css/aos.css";
-import "../master/Pharmacy/css/style.css";
-import {LinkedCalendar} from 'rb-datepicker';
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap-daterangepicker/daterangepicker.css';
+/* eslint-disable react/no-direct-mutation-state */
+import React, {
+    Component
+} from "react";
+import { Redirect } from 'react-router-dom'
+import Axios from 'axios'
+import InputField from './InputField'
+import Button from './Button'
 
-/*  <!-- Icons font CSS-->
-    <link href="@Url.Content("~/App_Themes/Signup/vendor/mdi-font/css/material-design-iconic-font.min.css")" rel="stylesheet" media="all">
-    <link href="@Url.Content("~/App_Themes/Signup/vendor/font-awesome-4.7/css/font-awesome.min.css")" rel="stylesheet" media="all">
-    <!-- Font special for pages-->
-    <link href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+import swal from 'sweetalert';
+import "./Login/css/main.css";
+import "./Login/css/util.css";
+import "./Login/vendor/bootstrap/css/bootstrap.min.css";
+import "./Login/fonts/font-awesome-4.7.0/css/font-awesome.min.css";
+import "./Login/fonts/iconic/css/material-design-iconic-font.min.css";
+import "./Login/vendor/animate/animate.css";
+import "./Login/vendor/css-hamburgers/hamburgers.min.css";
+import "./Login/vendor/animsition/css/animsition.min.css";
+import "./Login/vendor/select2/select2.min.css";
+import "./Login/vendor/daterangepicker/daterangepicker.css";
+import LoginBackground from "./Login/images/bg-01.jpg"
+/*<link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
+<!--===============================================================================================-->	
+	<link rel="stylesheet" type="text/css" href="vendor/css-hamburgers/hamburgers.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/animsition/css/animsition.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
+<!--===============================================================================================-->	
+	<link rel="stylesheet" type="text/css" href="vendor/daterangepicker/daterangepicker.css"> */
+const FullNameFieldName = 'fullName';
+const EmailAddressFieldName = 'emailAddress';
+const MobilePhoneNumberFieldName = 'mobilePhoneNumber';
+const PasswordFieldName = 'password'
+const RPasswordFieldName = 'rpassword';
+const FullNameMinLength = 5;
+const FullNameMaxLength = 30;
+const PasswordMinLength = 0;
+const FullNameInvalidErrorMessage = `Full Name must be between ${FullNameMinLength} - ${FullNameMaxLength} characters`;
+const EmailAddressInvalidErrorMessage = `Email Address is not a valid email address`;
+const MobilePhoneNumberInvalidErrorMessage = `Mobile Phone Number is not a valid mobile number`;
+const PasswordInvalidErrorMessage = `Password must be ${PasswordMinLength} characters`;
+const RPasswordInvalidErrorMessage = `Passwords must match`;
+//var history = createBrowserHistory({ basename: '/' });
 
-    <!-- Vendor CSS-->
-    <link href="@Url.Content("~/App_Themes/Signup/vendor/select2/select2.min.css")" rel="stylesheet" media="all">
-    <link href="@Url.Content("~/App_Themes/Signup/vendor/datepicker/daterangepicker.css")" rel="stylesheet" media="all">
 
-    <!-- Main CSS-->
-    <link href="@Url.Content("~/App_Themes/Signup/css/main.css")" rel="stylesheet" media="all">
-    <link rel="stylesheet" href="@Url.Content("~/App_Themes/Pharmacy/fonts/icomoon/style.css")">
+class SignUp extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            fullName: '',
+            emailAddress: '',
+            mobilePhoneNumber: '',
+            password: '',
+            rpassword: '',
+            formErrors: {
+                fullName: '',
+                emailAddress: '',
+                mobilePhoneNumber: '',
+                password: '',
+                rpassword: ''
+            },
+            fullNameValid: false,
+            emailAddressValid: false,
+            mobilePhoneNumberValid: false,
+            passwordValid: false,
+            rpasswordValid: false,
+            formValid: false,
+            redirect : false,
+            redirectPath : '',
+        };
+        this.handleSubmitForm = this.handleSubmitForm.bind(this);
+    }
+    handleUserInput = (e) => {
+        const name = e.target.name;
+        const value = e.target.value;
+        this.setState({
+                [name]: value
+            },
+            () => {
+                this.validateField(name, value)
+            });
+    }
+    validateField(fieldName, value) {
+        let fieldValidationErrors = this.state.formErrors;
+        let fullNameValid = this.state.fullNameValid;
+        let emailAddressValid = this.state.emailAddressValid;
+        let mobilePhoneNumberValid = this.state.mobilePhoneNumberValid;
+        let passwordValid = this.state.passwordValid;
+        let rpasswordValid = this.state.rpasswordValid;
 
-    <link rel="stylesheet" href="@Url.Content("~/App_Themes/Pharmacy/css/bootstrap.min.css")">
-    <link rel="stylesheet" href="@Url.Content("~/App_Themes/Pharmacy/css/magnific-popup.css")">
-    <link rel="stylesheet" href="@Url.Content("~/App_Themes/Pharmacy/css/jquery-ui.css")">
-    <link rel="stylesheet" href="@Url.Content("~/App_Themes/Pharmacy/css/owl.carousel.min.css")">
-    <link rel="stylesheet" href="@Url.Content("~/App_Themes/Pharmacy/css/owl.theme.default.min.css")">
+        switch (fieldName) {
+            case FullNameFieldName:
+                fullNameValid = value.length >= FullNameMinLength && value.length <= FullNameMaxLength;
+                fieldValidationErrors.fullName = fullNameValid ? '' : FullNameInvalidErrorMessage;
+                break;
+            case EmailAddressFieldName:
+                emailAddressValid = value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
+                fieldValidationErrors.emailAddress = emailAddressValid ? '' : EmailAddressInvalidErrorMessage;
+                break;
+            case MobilePhoneNumberFieldName:
+                mobilePhoneNumberValid = value.match(/^((0|\+234)8\d{3}\s?\d{6})$/);
+                fieldValidationErrors.mobilePhoneNumber = mobilePhoneNumberValid ? '' : MobilePhoneNumberInvalidErrorMessage;
+                break;
+            case PasswordFieldName:
+                passwordValid = value.length >= PasswordMinLength;
+                fieldValidationErrors.password = passwordValid ? '' : PasswordInvalidErrorMessage;
+                break;
+            case RPasswordFieldName:
+                rpasswordValid = value === this.state.password;
+                fieldValidationErrors.rpassword = rpasswordValid ? '' : RPasswordInvalidErrorMessage;
+                break;
+            default:
+                break;
+        }
 
+        this.setState({
+            formErrors: fieldValidationErrors,
+            fullNameValid: fullNameValid,
+            emailAddressValid: emailAddressValid,
+            mobilePhoneNumberValid: mobilePhoneNumberValid,
+            passwordValid: passwordValid,
+            rpasswordValid: rpasswordValid
+        }, this.validateForm);
+    };
 
-    <link rel="stylesheet" href="@Url.Content("~/App_Themes/Pharmacy/css/aos.css")">
+    validateForm() {
+        this.setState({
+            formValid: this.state.fullNameValid &&
+                this.state.emailAddressValid &&
+                this.state.mobilePhoneNumberValid &&
+                this.state.passwordValid &&
+                this.state.rpasswordValid
+        });
+    }
+    renderRedirect = (path) => {
+        swal({
+            title: "Success",
+            text: "You have successfully signed up, please login",
+            icon: "success",
+            button: {
+                text: "Ok",
+                closeModal: true,
+            },
+            dangerMode: true
+        })
+        return <Redirect to = {path}/>
+    }
+    handleSubmitForm(event) {
+        event.preventDefault();
 
-    <link rel="stylesheet" href="@Url.Content("~/App_Themes/Pharmacy/css/style.css")">*/
+        if (this.state.formValid) {
 
-export default function SignUp(props) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+            const data = {
+                FirstName: this.state.fullName.split(' ')[0],
+                LastName: this.state.fullName.split(' ')[1],
+                FullName: this.state.fullName,
+                Email: this.state.emailAddress,
+                Username: this.state.emailAddress,
+                MobilePhoneNumber: this.state.mobilePhoneNumber,
+                Password: this.state.password,
+            };
+            var result={}
+            var shouldRedirect = {};
+            var isConfirm = {}
+            try{
+                swal({
+                    title: "Alert",
+                    text: "Are you sure?",
+                    icon: "warning",
+                    buttons : true,
+                    dangerMode : true,
+                  }).then(s=>{
+                        isConfirm = s;
+                        if(isConfirm)
+                        {
+                            Axios.post(process.env.REACT_APP_MIDDLEWARE + '/api/RegisterUser', data)
+                            .then(res => {
+                                result = res;
+                                if (result.data.Code === '00') {
+                                    this.setState({redirect : true, redirectPath : '/signin'});
+                                    //this.setState({redirectPath : '/signin'});
+                                } else {
+                                    swal({
+                                        title: "Error!",
+                                        text: "Unable to register: " + result.data.Error,
+                                        icon: "error",
+                                        button: {
+                                            text: "Ok",
+                                            closeModal: true,
+                                        },
+                                        dangerMode: true
+                                    })
+                                    shouldRedirect = false;
+                                }
+                            })
+                        }
+                        
+                        })
+                
+              }
+              catch(error)
+              {
+                result = error.message;
+                swal({
+                    title: "Error!",
+                    text: "Unable to register " + result,
+                    icon: "error",
+                    button: {text: "Ok", closeModal: true,}
+                })
+              }
+        }
+    }
 
-  function validateForm() {
-    return email.length > 0 && password.length > 0;
-  }
-
-  function handleSubmit(event) {
-    event.preventDefault();
-  }
- function onDatesChange() {
-
- }
-  return (
-        
-    <div className="page-wrapper bg-gra-02 p-t-130 p-b-100 font-poppins">
-    <div className="wrapper wrapper--w680">
-        <div className="card card-4">
-            <div className="card-body">
-                <h2 className="title">Please Sign-up</h2>
-                <form method="POST" action="https://localhost:44340/Home/Register">
-                    <div className="row row-space">
-                        <div className="col-12">
-                            <div className="input-group">
-                                <label className="label">first name</label>
-                                <input className="input--style-4" type="text" name="first_name"></input>
-                            </div>
-                        </div>
-                        <div className="col-12">
-                            <div className="input-group">
-                                <label className="label">middle name</label>
-                                <input className="input--style-4" type="text" name="middle_name"></input>
-                            </div>
-                        </div>
-                        <div className="col-12">
-                            <div className="input-group">
-                                <label className="label">last name</label>
-                                <input className="input--style-4" type="text" name="last_name"></input>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="row row-space">
-                        <div className="col-12">
-                            <div className="input-group">
-                                <label className="label">Birthday</label>
-                                <div className="input-group-icon">
-                                <input class="input--style-4 js-datepicker" type="text" name="birthday"></input>
-                                        <i class="zmdi zmdi-calendar-note input-icon js-btn-calendar"></i>
-                                  </div>
-                            </div>
-                        </div>
-                        <div className="col-12">
-                            <div className="input-group">
-                                <label className="label">Gender</label>
-                                <div className="p-t-10">
-                                    <label className="radio-container m-r-45">
-                                        Male
-                                        <input type="radio" checked="checked" name="gender"></input>
-                                        <span className="checkmark"></span>
-                                    </label>
-                                    <label className="radio-container">
-                                        Female
-                                        <input type="radio" name="gender"></input>
-                                        <span className="checkmark"></span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="row row-space">
-                        <div className="col-12">
-                            <div className="input-group">
-                                <label className="label">Email</label>
-                                <input className="input--style-4" type="email" name="email"></input>
-                            </div>
-                        </div>
-                        <div className="col-12">
-                            <div className="input-group">
-                                <label className="label">Phone Number</label>
-                                <input className="input--style-4" type="text" name="phone"></input>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="p-t-15">
-                        <button className="btn btn--radius-2 btn--blue" type="submit">Submit</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>  
-  );
+    //   var history = useHistory();
+    render() {
+            if(this.state.redirect)
+            {
+                return this.renderRedirect(this.state.redirectPath)
+            }
+        else{
+            return (
+                <div className = "card Login container-login100"
+                style = {
+                    {
+                        backgroundImage: `url(${LoginBackground})`
+                    }
+                } >
+                <div className = "card-body wrap-login100 p-l-55 p-r-55 p-t-80 p-b-30" >
+                <form onSubmit = {
+                    this.handleSubmitForm
+                } >
+                <InputField className = {
+                    ""
+                }
+                type = {
+                    "text"
+                }
+                id = {
+                    FullNameFieldName
+                }
+                name = {
+                    "Full Name"
+                }
+                fontAwesomeIcon = {
+                    "fa fa-user"
+                }
+                value = {
+                    this.state.fullName
+                }
+                onChange = {
+                    this.handleUserInput
+                }
+                isValidProperty = {
+                    this.state.fullNameValid
+                }
+                errorMessage = {
+                    this.state.formErrors.fullName
+                } >
+                </InputField>
+                <InputField type = {
+                    "text"
+                }
+                id = {
+                    EmailAddressFieldName
+                }
+                name = {
+                    "Email Address"
+                }
+                fontAwesomeIcon = {
+                    "fa fa-envelope"
+                }
+                value = {
+                    this.state.emailAddress
+                }
+                onChange = {
+                    this.handleUserInput
+                }
+                isValidProperty = {
+                    this.state.emailAddressValid
+                }
+                errorMessage = {
+                    this.state.formErrors.emailAddress
+                } >
+                </InputField> 
+                <InputField type = {
+                    "text"
+                }
+                id = {
+                    MobilePhoneNumberFieldName
+                }
+                name = {
+                    "Mobile Phone"
+                }
+                fontAwesomeIcon = {
+                    "fa fa-phone"
+                }
+                value = {
+                    this.state.mobilePhoneNumber
+                }
+                onChange = {
+                    this.handleUserInput
+                }
+                isValidProperty = {
+                    this.state.mobilePhoneNumberValid
+                }
+                errorMessage = {
+                    this.state.formErrors.mobilePhoneNumber
+                } >
+                </InputField>
+                <InputField type = {
+                    "password"
+                }
+                id = {
+                    PasswordFieldName
+                }
+                name = {
+                    "Password"
+                }
+                fontAwesomeIcon = {
+                    "fa fa-key"
+                }
+                value = {
+                    this.state.password
+                }
+                onChange = {
+                    this.handleUserInput
+                }
+                isValidProperty = {
+                    this.state.passwordValid
+                }
+                errorMessage = {
+                    this.state.formErrors.password
+                } >
+                </InputField>
+                <InputField type = {
+                    "password"
+                }
+                id = {
+                    RPasswordFieldName
+                }
+                name = {
+                    "Retype Password"
+                }
+                fontAwesomeIcon = {
+                    "fa fa-key"
+                }
+                value = {
+                    this.state.rpassword
+                }
+                onChange = {
+                    this.handleUserInput
+                }
+                isValidProperty = {
+                    this.state.rpasswordValid
+                }
+                errorMessage = {
+                    this.state.formErrors.rpassword
+                } >
+                </InputField> 
+                <div className = "container-login100-form-btn" >
+                <Button type = {
+                    "submit"
+                }
+                id = {
+                    "submit-form-button"
+                }
+                text = {
+                    "Sign Up"
+                }
+                disabled = {
+                    !this.state.formValid
+                } > 
+                </Button> 
+                </div>
+                </form> 
+                </div>
+                </div>
+            );
+        }
+                
+            }
 }
+export default (SignUp);

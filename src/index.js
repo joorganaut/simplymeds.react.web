@@ -1,13 +1,23 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
+import { Provider } from 'react-redux';
+import configureStore from './components/user/configureStore';
+import { createBrowserHistory } from 'history';
+// import 'bootstrap/dist/css/bootstrap.min.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
+
+// Create browser history to use in the Redux store
+const baseUrl = '/'//document.getElementsByTagName('base')[0].getAttribute('href');
+const history = createBrowserHistory({ basename: baseUrl });
+const initialState = window.initialReduxState;
+const store = configureStore(history, initialState);
 ReactDOM.render(
+  <Provider store={store}>
   <React.StrictMode>
     <App />
-  </React.StrictMode>,
+  </React.StrictMode></Provider>,
   document.getElementById('root')
 );
 
