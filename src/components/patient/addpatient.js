@@ -190,13 +190,12 @@ class AddPatient extends Component {
             </div>              
             </div>
             <Modal show={this.state.ShowModal} onHide={this.handleClose} animation={false}
-            //size="lg"
             className=""
             dialogClassName="modal-100w modal-dialog modal-lg"
             aria-labelledby="contained-modal-title-vcenter"
             centered>
-          <Modal.Header closeButton={false}>
-            <Modal.Title><legend><center><h2><b>Sign Up</b></h2></center></legend></Modal.Title>
+          <Modal.Header closeButton>
+            <Modal.Title><legend><center><h2><b>Medical History</b></h2></center></legend></Modal.Title>
           </Modal.Header>
           <Modal.Body >
               <div>
