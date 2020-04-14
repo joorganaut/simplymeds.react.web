@@ -174,7 +174,7 @@ class MedicalConditions extends Component{
       // <th>Condition</th>
       // <th>Medication</th>
       // <th>Used Last</th>
-        return <Table variant="light" striped bordered hover size='sm'>
+        return <Table variant="light" striped bordered hover size='sm' className="col-lg-12 col-md-8 col-sm-4">
         {this.buildTable([{heading : 'ID'}, {heading:'Name'}, {heading : 'Medication'}, {heading : 'UsedLast'}], this.state.Medicals, '')}
         </Table>
       }
