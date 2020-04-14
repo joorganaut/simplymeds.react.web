@@ -49,6 +49,7 @@ class RoleMenu extends Component{
             {this.state.MenuItems.forEach(x=>{
                     this.getMenuItemsDIV(x);
                 })}
+                <a class="dropdown-item" href={"/patient-details/?id="+this.state.ID}>Personal Details</a>
               <a class="dropdown-item" href="/" onClick={this.Logout}>Logout</a>
             </div> </li>)
     }

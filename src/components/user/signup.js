@@ -211,18 +211,22 @@ class SignUp extends Component {
             }
         else{
             return (
-                <div className = "card Login container-login100"
+                <div className = "form container-login100 text-center" 
                 style = {
                     {
                         backgroundImage: `url(${LoginBackground})`
                     }
                 } >
-                <div className = "card-body wrap-login100 p-l-55 p-r-55 p-t-80 p-b-30" >
+                <div className = "text-center card-body wrap-login100 p-l-55 p-r-55 p-t-80 p-b-30" >
                 <form onSubmit = {
                     this.handleSubmitForm
-                } >
+                } class="well form-horizontal">
+                    <fieldset>
+                    <legend><center><h2><b>Sign Up</b></h2></center></legend>
+                    <center>
+                    <div className="form-group text-center justify-content-center ">
                 <InputField className = {
-                    ""
+                    "text-center"
                 }
                 type = {
                     "text"
@@ -349,6 +353,8 @@ class SignUp extends Component {
                     this.state.formErrors.rpassword
                 } >
                 </InputField> 
+                </div>
+                </center>
                 <div className = "container-login100-form-btn" >
                 <Button type = {
                     "submit"
@@ -364,6 +370,7 @@ class SignUp extends Component {
                 } > 
                 </Button> 
                 </div>
+                </fieldset>
                 </form> 
                 </div>
                 </div>

@@ -23,6 +23,7 @@
     "react-bootstrap-sweetalert": "^5.1.9",
     "react-dom": "^16.13.1",
     "react-hot-loader": "^4.12.20",
+    "react-loader-spinner": "^3.1.14",
     "react-popper": "^2.2.2",
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.1.2",

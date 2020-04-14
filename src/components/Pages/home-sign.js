@@ -3,7 +3,7 @@ import Index from '../master/index'
 import Footer from '../master/footer'
 import Body from '../user/login'
 
-class Home extends Component {
+class HomeSignIn extends Component {
     render(){
     return (
         <div>
@@ -14,4 +14,4 @@ class Home extends Component {
     );
   }
 }
-  export default Home;
+  export default HomeSignIn;

@@ -7,8 +7,8 @@ class InputField extends Component{
     render(){
         return(
             <Fragment>
-                <div className="row">
-                    <div className="col-12">
+                <div className="row text-center">
+                    <div className="col-4">
                         <InputLabel id={this.props.id} name={this.props.name} isValidProperty={this.props.isValidProperty}>
                         </InputLabel>
                         <div className ={`text-default form-group`}>
