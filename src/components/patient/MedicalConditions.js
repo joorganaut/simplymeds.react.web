@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import {Table} from 'react-bootstrap'
-import InputField from '../user/InputField'
 import Axios from 'axios'
 import swal from 'sweetalert';
 import Loader from 'react-loader-spinner'
@@ -9,6 +8,7 @@ import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import "react-datepicker/dist/react-datepicker.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import LoginBackground from "../master/Pharmacy/images/bg-01_old.jpg";
+import { Redirect } from 'react-router-dom';
 
 class MedicalConditions extends Component{
     constructor(props)
@@ -20,7 +20,9 @@ class MedicalConditions extends Component{
             Medicals : [],
             Name : '',
             TreatmentPlan : '',
-            UsedLast : ''
+            UsedLast : '',
+            Redirect : false,
+            RedirectPath : '/patient-details/?id='+props.PatientID
         }
     }
     
@@ -28,41 +30,18 @@ class MedicalConditions extends Component{
       var values = []
        await this.GetPatientMedicals(this.state.PatientID).then(data=>{
         //alert(typeof(data))
-        if(data === null || data.length <= 0) 
+        if(data !== null && data.length > 0) 
         {
-          values = [
-            {
-              ID : 1,
-              Name : 'Asthma',
-              TreatmentPlan : 'Ventolin',
-              UsedLast : '12th May 2019',
-              IsLoading : this.state.IsLoading
-            },
-            {
-              ID : 2,
-              Name : 'Diabetes',
-              TreatmentPlan : 'Glucophage',
-              UsedLast : '1st April 2020'
-            },
-            {
-              ID : 3,
-              Name : 'Corona Flu',
-              TreatmentPlan : 'Choroquine',
-              UsedLast : '1st Dec 2019'
-            }
-          ]
+          values = data.map(obj=>
+            ({ID : obj.ID, Name : obj.Name, TreatmentPlan : obj.TreatmentPlan, UsedLast : new Date(obj.LastUsed).toDateString()})
+          )
         }
        })
 
        
       this.setState({Medicals : values})
       this.setState({IsLoading : false})
-    }
-    handleChange =(value, formattedValue) =>{
-      this.setState({
-        value: value, // ISO String, ex: "2016-11-19T12:00:00.000Z"
-        formattedValue: formattedValue // Formatted String, ex: "11/19/2016"
-      });
+      this.setState({Reload : false})
     }
     handleUserInput=(e)=>{
       this.setState({[e.target.name] : e.target.value})
@@ -85,7 +64,7 @@ class MedicalConditions extends Component{
         <span className="input-group-text">
             <i className='fa fa-info-circle' aria-hidden="true"></i>
         </span>  
-        <input type="text" className="form-control"  onChange={this.handleUserInput} name='Name'   value={this.state.Name}>
+        <input type="text" className="form-control col-sm-12"  onChange={this.handleUserInput} name='Name'   value={this.state.Name}>
         </input> 
           </div></div>  
         </td>
@@ -95,7 +74,7 @@ class MedicalConditions extends Component{
         <span className="input-group-text">
             <i className='fa fa-medkit' aria-hidden="true"></i>
         </span>  
-        <input type="text" className="form-control"  onChange={this.handleUserInput} name='TreatmentPlan'   value={this.state.TreatmentPlan}>
+        <input type="text" className="form-control col-sm-12"  onChange={this.handleUserInput} name='TreatmentPlan'   value={this.state.TreatmentPlan}>
         </input> 
           </div></div> 
         </td>
@@ -105,25 +84,35 @@ class MedicalConditions extends Component{
         <span className="input-group-text">
             <i className='fa fa-calendar' aria-hidden="true"></i>
         </span>  
-        <input type="date" className="form-control"  onChange={this.handleUserInput} name='UsedLast'   value={this.state.UsedLast}>
+        <input type="date" className="form-control col-sm-12"  onChange={this.handleUserInput} name='UsedLast'   value={this.state.UsedLast}>
         </input> 
           </div></div> 
         </td>
-        <td><button className="btn btn-primary" onClick={this.HandleAdd}><i className="fa fa-plus"></i></button></td>
+        <td><button className="btn btn-primary" onClick={this.HandleAdd} title="add"><i className="fa fa-plus"></i></button></td>
         <td></td>
         </tr>
             {data.map(item =>
                 <tr key={`${item[propertyAsKey]}-row`}>
                     {columns.map(col => <td key={`${item[propertyAsKey]}-${col.heading}`}>{item[col.heading]}</td>)}
-                    <td><button className="btn btn-primary"><i className="fa fa-pencil-square-o"></i></button></td>
-                    <td><button className="btn btn-danger"><i className="fa fa-trash"></i></button></td>
+                    <td><button className="btn btn-primary" title="edit"><i className="fa fa-pencil-square-o"></i></button></td>
+                    <td><button className="btn btn-danger" title="delete" id={item['ID']} value={item['ID']} name={item['ID']+'del-btn'} onClick={this.HandleDelete}><i className="fa fa-trash"></i></button></td>
                 </tr>
             )}
         </tbody></>
       );
   };
+  GoBack=()=>{
+    this.setState({Redirect : true})
+  }
+  RedirectToPatientDetails=()=>{
+    var path = this.state.RedirectPath;
+    return <Redirect to={path}/>
+  }
     render(){
-      
+      if(this.state.Redirect)
+      {
+        return this.RedirectToPatientDetails();
+      }
       if(this.state.IsLoading)
       {
          return(
@@ -134,7 +123,6 @@ class MedicalConditions extends Component{
       color="#00BFFF"
       height={100}
       width={100}
-      //timeout={10000}
       />
          </div>
          </center>
@@ -144,8 +132,9 @@ class MedicalConditions extends Component{
         return <>
         <div className="form form-group container-login100" style = {{backgroundImage: `url(${LoginBackground})`}}>
         <div className = "card-body wrap-login100 p-l-55 p-r-55 p-t-80 p-b-30" >
-        <legend><center><h2><b>Patient Medical History</b></h2></center></legend>
-        <Table variant="light" striped bordered hover size='md' className="col-lg-12 col-md-8 col-sm-4">
+        <legend><center><h2><b>Patient Medical History</b></h2></center><button className="btn btn-primary" onClick={this.GoBack}>back</button></legend>
+        
+        <Table variant="light" striped bordered hover size='md' className="col-lg-4 col-md-4 col-sm-8">
         {this.buildTable([{heading : 'ID'}, {heading:'Name'}, {heading : 'TreatmentPlan'}, {heading : 'UsedLast'}],
          this.state.Medicals, 'ID')}
         </Table></div></div>
@@ -250,6 +239,7 @@ class MedicalConditions extends Component{
               dangerMode: true
             })
           }
+          this.componentWillMount()
           this.setState({IsLoading : false})
         })
       } catch (error) {
@@ -266,6 +256,7 @@ class MedicalConditions extends Component{
         this.setState({IsLoading : false})
       }
       }
+      
     HandleAdd =(e)=>{
       swal({
         title: "Alert",
@@ -276,7 +267,31 @@ class MedicalConditions extends Component{
       }).then(async s =>{
         if (s) {
           this.AddPatientMedicals()
-          //this.setState({IsLoading : true})
+          this.setState({Name : ''})
+          this.setState({TreatmentPlan : ''})
+          this.setState({UsedLast : ''})
+        }
+      })
+    }
+    HandleDelete =(e)=>{
+      swal({
+        title: "Alert",
+        text: `Are you sure, you want to delete record with ID : ${e.target.id}?`,
+        icon: "warning",
+        buttons : true,
+        dangerMode : true,
+      }).then(async s =>{
+        if (s) {
+          swal({
+            title: "Alert!",
+            text: `You cannot delete medical history`,
+            icon: "warning",
+            button: {
+              text: "Ok",
+              closeModal: true,
+            },
+            dangerMode: true
+          })
         }
       })
     }
