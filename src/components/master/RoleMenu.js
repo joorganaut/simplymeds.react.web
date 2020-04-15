@@ -1,6 +1,8 @@
 import React, {Component} from 'react'
 import 'react-bootstrap'
-import logo from "./Pharmacy/css/images/SimplyMeds_logo1.jpeg"
+// import logo from "./Pharmacy/css/images/SimplyMeds_logo1.jpeg"
+import logo from "./Pharmacy/css/images/bg_rx3.0.jpg"
+// bg_rx3.0
 class RoleMenu extends Component{
     constructor(props)
     {
@@ -62,13 +64,13 @@ class RoleMenu extends Component{
                 <a className="navbar-brand" href="/">
                 <img alt="" src={logo} className="logo" style={
                     {
-                        height:35,
-                        width:35,
-                        borderRadius : 50
+                        height:70,
+                        width:70,
+                        // borderRadius : 50
                     }
-                }
-                />
-                    Simply Meds</a>
+                }/>
+                    <small>&reg;</small></a>
+                    {/* Simply Meds</a> */}
                 <button className="navbar-toggler " type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span className="navbar-toggler-icon"></span>
                 </button>
@@ -136,7 +138,7 @@ class RoleMenu extends Component{
                 }
             }
             />
-                Simply Meds</a>
+                Rx3.0</a>
             <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span className="navbar-toggler-icon"></span>
             </button>

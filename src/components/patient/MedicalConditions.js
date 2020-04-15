@@ -61,7 +61,7 @@ class MedicalConditions extends Component{
         <td key={`Add-${'ID'}`}>   
         <div className="input-group input-group-lg">
          <div className="input-group-prepend">
-        <span className="input-group-text">
+        <span className="input-group-addon">
             <i className='fa fa-info-circle' aria-hidden="true"></i>
         </span>  
         <input type="text" className="form-control col-sm-12"  onChange={this.handleUserInput} name='Name'   value={this.state.Name}>
@@ -71,7 +71,7 @@ class MedicalConditions extends Component{
         <td key={`Add-${'ID'}`}>   
         <div className="input-group input-group-lg">
          <div className="input-group-prepend">
-        <span className="input-group-text">
+        <span className="input-group-addon">
             <i className='fa fa-medkit' aria-hidden="true"></i>
         </span>  
         <input type="text" className="form-control col-sm-12"  onChange={this.handleUserInput} name='TreatmentPlan'   value={this.state.TreatmentPlan}>
@@ -81,8 +81,8 @@ class MedicalConditions extends Component{
         <td key={`Add-${'ID'}`}>   
         <div className="input-group input-group-lg">
          <div className="input-group-prepend">
-        <span className="input-group-text">
-            <i className='fa fa-calendar' aria-hidden="true"></i>
+        <span className="input-group-addon">
+            <i className='fa fa-calendar'></i>
         </span>  
         <input type="date" className="form-control col-sm-12"  onChange={this.handleUserInput} name='UsedLast'   value={this.state.UsedLast}>
         </input> 

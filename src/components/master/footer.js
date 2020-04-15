@@ -31,7 +31,7 @@ class Footer extends Component
                             <ul className="list-unstyled">
                                 <li className="address">Block 7 Flat 7 Games Village Surulere Lagos</li>
                                 <li className="phone"><a href="tel://+2348091115390">+234 80 9111 5390</a></li>
-                                <li className="email">info@simplymeds.com.ng</li>
+                                <li className="email">info@Rx30.com.ng</li>
                             </ul>
                         </div>
 
@@ -45,7 +45,7 @@ class Footer extends Component
                             Copyright &copy;
                             {new Date().getFullYear()};All rights reserved | Powered
                             by <a href="https://colorlib.com" target="_blank"
-                                  className="text-primary">Simply Meds&reg;</a>
+                                  className="text-primary">Rx 3.0&reg;</a>
                         </p>
                     </div>
 
