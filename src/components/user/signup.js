@@ -8,16 +8,6 @@ import InputField from './InputField'
 import Button from './Button'
 
 import swal from 'sweetalert';
-import "./Login/css/main.css";
-import "./Login/css/util.css";
-import "./Login/vendor/bootstrap/css/bootstrap.min.css";
-import "./Login/fonts/font-awesome-4.7.0/css/font-awesome.min.css";
-import "./Login/fonts/iconic/css/material-design-iconic-font.min.css";
-import "./Login/vendor/animate/animate.css";
-import "./Login/vendor/css-hamburgers/hamburgers.min.css";
-import "./Login/vendor/animsition/css/animsition.min.css";
-import "./Login/vendor/select2/select2.min.css";
-import "./Login/vendor/daterangepicker/daterangepicker.css";
 import LoginBackground from "./Login/images/bg-01.jpg";
 const FullNameFieldName = 'fullName';
 const EmailAddressFieldName = 'emailAddress';

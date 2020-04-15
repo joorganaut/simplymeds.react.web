@@ -17,18 +17,7 @@ import Example from './example'
 // import 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
-// import "../user/Login/css/main.css";
-// import "../user/Login/css/util.css";
-// import "../user/Login/vendor/bootstrap/css/bootstrap.min.css";
-// import "../user/Login/fonts/font-awesome-4.7.0/css/font-awesome.min.css";
-// import "../user/Login/fonts/iconic/css/material-design-iconic-font.min.css";
-// import "../user/Login/vendor/animate/animate.css";
-// import "../user/Login/vendor/css-hamburgers/hamburgers.min.css";
-// import "../user/Login/vendor/animsition/css/animsition.min.css";
-// import "../user/Login/vendor/select2/select2.min.css";
-// import "../user/Login/vendor/daterangepicker/daterangepicker.css";
 import LoginBackground from "../master/Pharmacy/images/bg-01_old.jpg";
-import { Container } from 'rsuite';
 
 class AddPatient extends Component {
     constructor(props) {
@@ -40,7 +29,8 @@ class AddPatient extends Component {
             FirstName : '',
             IsLoading : true,
             IsFormValid : false,
-            ShowModal : false
+            ShowModal : false,
+            Redirect : false
         }
     }
     GetPatient = async (id) => {
@@ -124,98 +114,112 @@ class AddPatient extends Component {
         })
         
     }
+    renderRedirect = (path) => {
+       return <Redirect to = {path}/>
+    }
+    redirectToMedicalHistory=()=>{
+        return this.renderRedirect('/patient-medicals/?id='+this.state.Patient.ID)
+    }
+    setRedirectToMedicalHistory=()=>this.setState({Redirect : true})
      render () {
-         if(this.state.IsLoading)
+         if(this.state.Redirect)
          {
-            return(
-                <center>
-            <div>Please hold on.....
-                <Loader
-         type="Puff"
-         color="#00BFFF"
-         height={100}
-         width={100}
-         timeout={10000}/>
-            </div>
-            </center>
-            )
+             return (this.redirectToMedicalHistory());
          }
          else{
-         return(<>
-            <div className = " form container-login100"
-            style = {{backgroundImage: `url(${LoginBackground})`}}>
-                {/* <Example></Example> */}
-            <div className = "card-body wrap-login100 p-l-55 p-r-55 p-t-80 p-b-30" >
-            <form onSubmit = {this.handleSubmitForm} className="well form-horizontal">
-                <legend><center><h2><b>Patient Details</b></h2></center></legend>
-                <div class="form-group">
-            <InputField className = {""}
-            type = {"text"}
-            id = {'FirstNameFieldName'}
-            name = {"First Name"}
-            value = {this.state.Patient.FirstName}
-            isValidProperty = {true}>
-            </InputField>
-
-            <InputField className = {""}
-            type = {"text"}
-            id = {'LastNameFieldName'}
-            name = {"Last Name"}
-            value = {this.state.Patient.LastName}
-            isValidProperty = {true}>
-            </InputField>
-
-            <InputField className = {""}
-            type = {"text"}
-            id = {'MobilePhoneFieldName'}
-            name = {"Mobile Phone"}
-            value = {this.state.Patient.PhoneNumber}
-            isValidProperty = {true}>
-            </InputField>
-           
-            <div className = "container-login100-form-btn">
-            <Button type = {"submit"}
-            id = {"submit-form-button"}
-            text = {"Update"}
-            disabled = {!this.state.formValid} > 
-            </Button> 
-            </div>
-            </div>
-            <div className="container-login100-form-btn">
-            <ModalButton className="btn btn-primary" onClick={this.handleShow} >
-        Add Medicals
-      </ModalButton>
-            </div>
-            </form> 
-            </div>              
-            </div>
-            <Modal show={this.state.ShowModal} onHide={this.handleClose} animation={false}
-            className=""
-            dialogClassName="modal-100w modal-dialog modal-lg"
-            aria-labelledby="contained-modal-title-vcenter"
-            centered>
-          <Modal.Header closeButton>
-            <Modal.Title><legend><center><h2><b>Medical History</b></h2></center></legend></Modal.Title>
-          </Modal.Header>
-          <Modal.Body >
-              <div>
-               <div>{/* className = "card-body p-l-55 p-r-55 p-t-80 p-b-30" > */}
-                <MedicalCondition PatientID = {this.state.Patient.ID}></MedicalCondition>
-              </div>
-              </div>
-            </Modal.Body>
-          <Modal.Footer>
-          <ModalButton variant="primary" className="btn btn-success" onClick={this.handleClose} >
-        Add
-      </ModalButton>
-            <ModalButton variant="secondary" className="btn btn-primary" onClick={this.handleClose} >
-        Close
-      </ModalButton>
-          </Modal.Footer>
-        </Modal>
-        </>
-        );
+            if(this.state.IsLoading)
+            {
+               return(
+                   <center>
+               <div>Please hold on.....
+                   <Loader
+            type="Puff"
+            color="#00BFFF"
+            height={100}
+            width={100}
+            timeout={10000}/>
+               </div>
+               </center>
+               )
+            }
+            else{
+            return(<>
+               <div className = " form container-login100"
+               style = {{backgroundImage: `url(${LoginBackground})`}}>
+                   {/* <Example></Example> */}
+               <div className = "card-body wrap-login100 p-l-55 p-r-55 p-t-80 p-b-30" >
+               <form onSubmit = {this.handleSubmitForm} className="well form-horizontal">
+                   <legend><center><h2><b>Patient Details</b></h2></center></legend>
+                   <div class="form-group">
+               <InputField className = {""}
+               type = {"text"}
+               id = {'FirstNameFieldName'}
+               name = {"First Name"}
+               value = {this.state.Patient.FirstName}
+               isValidProperty = {true}>
+               </InputField>
+   
+               <InputField className = {""}
+               type = {"text"}
+               id = {'LastNameFieldName'}
+               name = {"Last Name"}
+               value = {this.state.Patient.LastName}
+               isValidProperty = {true}>
+               </InputField>
+   
+               <InputField className = {""}
+               type = {"text"}
+               id = {'MobilePhoneFieldName'}
+               name = {"Mobile Phone"}
+               value = {this.state.Patient.PhoneNumber}
+               isValidProperty = {true}>
+               </InputField>
+              
+               <div className = "container-login100-form-btn">
+               <Button type = {"submit"}
+               id = {"submit-form-button"}
+               text = {"Update"}
+               disabled = {!this.state.formValid} > 
+               </Button> 
+               </div>
+               </div>
+               <div className="container-login100-form-btn">
+               <ModalButton className="btn btn-primary" onClick={this.setRedirectToMedicalHistory} >
+           Add Medicals {this.state.Redirect}
+         </ModalButton>
+               </div>
+               </form> 
+               </div>              
+               </div>
+               <Modal show={this.state.ShowModal} onHide={this.handleClose} animation={false}
+               className=""
+               dialogClassName="modal-100w modal-dialog modal-lg"
+               aria-labelledby="contained-modal-title-vcenter"
+               centered>
+             <Modal.Header closeButton>
+               <Modal.Title><legend><center><h2><b>Medical History</b></h2></center></legend></Modal.Title>
+             </Modal.Header>
+             <Modal.Body >
+                 <div>
+                  <div>{/* className = "card-body p-l-55 p-r-55 p-t-80 p-b-30" > */}
+                   <MedicalCondition PatientID = {this.state.Patient.ID}></MedicalCondition>
+                 </div>
+                 </div>
+               </Modal.Body>
+             <Modal.Footer>
+             <ModalButton variant="primary" className="btn btn-success" onClick={this.handleClose} >
+           Add
+         </ModalButton>
+               <ModalButton variant="secondary" className="btn btn-primary" onClick={this.handleClose} >
+           Close
+         </ModalButton>
+             </Modal.Footer>
+           </Modal>
+           </>
+           );
+            }
          }
+         
      
      }
     

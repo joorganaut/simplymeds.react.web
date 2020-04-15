@@ -4,6 +4,7 @@ import Signin from '../components/Pages/home-sign'
 import Signup from '../components/Pages/home-signup'
 import Index from '../components/Pages/home-index'
 import PatientIndex from '../components/Pages/patient-index'
+import PatientMedicals from '../components/Pages/patient-medicals'
 
 export default function Routes(){
     return(
@@ -12,6 +13,7 @@ export default function Routes(){
         <Route path='/signin' component={Signin}/>
         <Route path='/signup' component={Signup}/>
         <Route path='/patient-details/*' component={PatientIndex}/>
+        <Route path='/patient-medicals/*' component={PatientMedicals}/>
         <Route component={Index} />
     </Switch>
     );
