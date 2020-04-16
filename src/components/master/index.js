@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 // import 'react-bootstrap'
-import logo from "./Pharmacy/css/images/SimplyMeds_logo1.jpeg"
 import RoleMenu from "./RoleMenu"
 class Index extends Component {
 
