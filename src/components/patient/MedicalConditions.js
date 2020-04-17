@@ -3,6 +3,7 @@ import {Table} from 'react-bootstrap'
 import Axios from 'axios'
 import swal from 'sweetalert';
 import Loader from 'react-loader-spinner'
+import Pagination from "react-js-pagination";
 import 'react-bootstrap'
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import "react-datepicker/dist/react-datepicker.css";
@@ -10,12 +11,18 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import LoginBackground from "../master/Pharmacy/images/bg-01_old.jpg";
 import { Redirect } from 'react-router-dom';
 
+
 class MedicalConditions extends Component{
     constructor(props)
     {
         super(props)
         this.state = {
             PatientID : props.PatientID,
+            pagingParams : {
+              page : 1,
+              pageSize : 5,
+              
+            },
             IsLoading : true,
             Medicals : [],
             Name : '',
@@ -62,7 +69,7 @@ class MedicalConditions extends Component{
         <div className="input-group input-group-lg">
          <div className="input-group-prepend">
         <span className="input-group-addon">
-            <i className='fa fa-info-circle' aria-hidden="true"></i>
+            <i className='fas fa-info-circle' aria-hidden="true"></i>
         </span>  
         <input type="text" className="form-control col-sm-12"  onChange={this.handleUserInput} name='Name'   value={this.state.Name}>
         </input> 
@@ -72,7 +79,7 @@ class MedicalConditions extends Component{
         <div className="input-group input-group-lg">
          <div className="input-group-prepend">
         <span className="input-group-addon">
-            <i className='fa fa-medkit' aria-hidden="true"></i>
+            <i className='fas fa-medkit' aria-hidden="true"></i>
         </span>  
         <input type="text" className="form-control col-sm-12"  onChange={this.handleUserInput} name='TreatmentPlan'   value={this.state.TreatmentPlan}>
         </input> 
@@ -82,20 +89,20 @@ class MedicalConditions extends Component{
         <div className="input-group input-group-lg">
          <div className="input-group-prepend">
         <span className="input-group-addon">
-            <i className='fa fa-calendar'></i>
+            <i className='fas fa-calendar'></i>
         </span>  
         <input type="date" className="form-control col-sm-12"  onChange={this.handleUserInput} name='UsedLast'   value={this.state.UsedLast}>
         </input> 
           </div></div> 
         </td>
-        <td><button className="btn btn-primary" onClick={this.HandleAdd} title="add"><i className="fa fa-plus"></i></button></td>
+        <td><button className="btn btn-primary" onClick={this.HandleAdd} title="add"><i className="fas fa-plus"></i></button></td>
         <td></td>
         </tr>
             {data.map(item =>
                 <tr key={`${item[propertyAsKey]}-row`}>
                     {columns.map(col => <td key={`${item[propertyAsKey]}-${col.heading}`}>{item[col.heading]}</td>)}
-                    <td><button className="btn btn-primary" title="edit"><i className="fa fa-pencil-square-o"></i></button></td>
-                    <td><button className="btn btn-danger" title="delete" id={item['ID']} value={item['ID']} name={item['ID']+'del-btn'} onClick={this.HandleDelete}><i className="fa fa-trash"></i></button></td>
+                    <td><button className="btn btn-primary" title="edit"><i className="fas fa-pencil-square-o"></i></button></td>
+                    <td><button className="btn btn-danger" title="delete" id={item['ID']} value={item['ID']} name={item['ID']+'del-btn'} onClick={this.HandleDelete}><i className="fas fa-trash"></i></button></td>
                 </tr>
             )}
         </tbody></>
@@ -137,7 +144,20 @@ class MedicalConditions extends Component{
         <Table variant="light" striped bordered hover size='md' className="col-lg-4 col-md-4 col-sm-8">
         {this.buildTable([{heading : 'ID'}, {heading:'Name'}, {heading : 'TreatmentPlan'}, {heading : 'UsedLast'}],
          this.state.Medicals, 'ID')}
-        </Table></div></div>
+        </Table>
+       <div className="pagination">
+       <Pagination
+          itemClass="page-item"
+          linkClass="page-link"
+          activePage={this.state.pagingParams.page}
+          itemsCountPerPage={this.state.pagingParams.pageSize}
+          totalItemsCount={this.state.pagingParams.totalItemsCount}
+          pageRangeDisplayed={1}
+          onChange={this.handlePageChange.bind(this)}
+        />
+       </div>
+        </div>
+        </div>
         </>
       }
         }
@@ -145,13 +165,20 @@ class MedicalConditions extends Component{
       var result = {};
       var error = '';
       var data = {
-          PatientID: id
+          PatientID: id,
+          pagingParams : {
+            page : this.state.pagingParams.page - 1,
+            pageSize : this.state.pagingParams.pageSize,
+            sort : 'ID',
+            dir : 'asc'
+          }
       }
       try {
           await Axios.post(process.env.REACT_APP_MIDDLEWARE + '/api/RetrievePatientMedicals', data).then(async res => {
               if (res.data.Code === '00') {
                   if (res.data.record !== null && res.data.record.length > 0) {
                       result = res.data.record;
+                      this.state.pagingParams.totalItemsCount = res.data.count;
                       await swal({
                         title: "Success!",
                         text: `Patient medicals loaded successfully`,
@@ -294,6 +321,16 @@ class MedicalConditions extends Component{
           })
         }
       })
+    }
+    handlePageChange=(e)=>{
+      this.setState({
+        IsLoading: true
+      })
+      this.state.pagingParams.page = e;
+      this.componentWillMount();
+      this.setState({
+        IsLoading: false
+      });
     }
 }
 export default MedicalConditions

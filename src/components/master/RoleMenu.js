@@ -88,17 +88,72 @@ class RoleMenu extends Component{
           Quick Shopping
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" href="/">Drugs</a>
-          <a class="dropdown-item" href="/">Vaccines</a>           
-          <a class="dropdown-item" href="/">Super-mart</a>          
+          <a class="dropdown-item" href="/">
+          <div className="input-group input-group-lg">
+                        <div className="input-group-prepend">
+                        <span className="input-text">
+                            <i className ="fas fa-pills" aria-hidden="true">Meds ++Prescription</i>
+                        </span>  
+                        </div></div>
+          </a>
+          <a class="dropdown-item" href="/">
+          <div className="input-group input-group-lg">
+                        <div className="input-group-prepend">
+                        <span className="input-text">
+                            <i className ="fas fa-syringe" aria-hidden="true">Vaccines</i>
+                        </span>  
+                        </div></div>
+              </a>           
+          <a class="dropdown-item" href="/">
+              <div className="input-group input-group-lg">
+                        <div className="input-group-prepend">
+                        <span className="input-text">
+                            <i className ="fas fa-shopping-cart" aria-hidden="true">Super Mart</i>
+                        </span>  
+                        </div></div>
+              </a>     
+
         <a class="nav-link dropdown-toggle" href="/" id="navbarDropdownMenuNestedLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Life style
+        <div className="input-group input-group-lg">
+                        <div className="input-group-prepend">
+                        <span className="">
+                            <i className ="fas fa-heartbeat" aria-hidden="true">Life Style</i>
+                        </span>  
+                        </div></div>
         </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuNestedLink">
-          <a class="dropdown-item" href="/">Supplements</a>          
-          <a class="dropdown-item" href="/">Vitamins</a>
-          <a class="dropdown-item" href="/">Diet &amp; Nutrition</a>
-          <a class="dropdown-item" href="/">Tea &amp; Coffee</a>
+        <div class="dropdown-menu form-group" aria-labelledby="navbarDropdownMenuNestedLink">
+          <a class="dropdown-item" href="/">
+          <div className="input-group input-group-lg">
+                        <div className="input-group-prepend">
+                        <span className="">
+                            <i className ="fas fa-capsules" aria-hidden="true">Supplements</i>
+                        </span>  
+                        </div></div>
+              </a>          
+          <a class="dropdown-item" href="/">
+          <div className="input-group input-group-lg">
+            <div className="input-group-prepend">
+            <span className="">
+                <i className ="fas fa-capsules" aria-hidden="true">Vitamins</i>
+            </span>  
+            </div></div>
+              </a>
+              <a class="dropdown-item" href="/">
+          <div className="input-group input-group-lg">
+            <div className="input-group-prepend">
+            <span className="">
+                <i className ="fas fa-capsules" aria-hidden="true">Diet &amp; Nutrition</i>
+            </span>  
+            </div></div>
+              </a>
+          <a class="dropdown-item" href="/">
+          <div className="input-group input-group-lg">
+            <div className="input-group-prepend">
+            <span className="">
+                <i className ="fas fa-mug-hot" aria-hidden="true"> Tea &amp; Coffee</i>
+            </span>  
+            </div></div>
+            </a>
         </div>    
         </div>
       </li>
@@ -130,7 +185,7 @@ class RoleMenu extends Component{
 
 <div class="container text-dark">
 <nav className="navbar navbar-expand-lg text-dark ">
-            <a className="navbar-brand" href="/">
+            <a className="navbar-brand logo" href="/">
             <img alt="" src={logo} className="logo" style={
                 {
                     height:35,
@@ -145,8 +200,15 @@ class RoleMenu extends Component{
             <div className="collapse navbar-collapse text-dark" id="navbarSupportedContent">
             <ul className="navbar-nav mr-auto">
                         
-                        <li className="nav-item">
-                            <a className="nav-link" href="/signin">Login</a>
+                        <li className="nav-item">                        
+                        <a className="nav-link" href="/signin">
+                        <div className="input-group input-group-lg">
+                        <div className="input-group-prepend">
+                        <span className="input-group-addon">
+                            <i className='fa fa-sign-in' aria-hidden="true">Login</i>
+                        </span>  
+                        </div></div>
+                        </a>                        
                         </li>
                         </ul>
             </div>

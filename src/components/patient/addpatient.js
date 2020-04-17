@@ -10,11 +10,6 @@ import Loader from 'react-loader-spinner'
 import InputField from '../user/InputField'
 import Button from '../user/Button'
 import {Button as ModalButton} from 'react-bootstrap'
-import {Modal} from 'react-bootstrap'
-import MedicalCondition from './MedicalConditions'
-import Example from './example'
-// import 'react-bootstrap'
-// import 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import LoginBackground from "../master/Pharmacy/images/bg-01_old.jpg";
@@ -27,15 +22,16 @@ class AddPatient extends Component {
             Patient:{},
             IsLoading : true,
             IsFormValid : true,
-            Redirect : false
+            Redirect : false,
         }
+        this.HandleUserInput = this.HandleUserInput.bind(this)
         this.handleSubmitForm = this.handleSubmitForm.bind(this)
     }
     handleSubmitForm=(event)=>{
         event.preventDefault();
         var result;
         const data = this.state.Patient;
-        alert(this.state.Patient.DOB)
+        //alert(this.state.Patient.DOB)
         try{
             swal({
                 title: "Alert",
@@ -128,16 +124,17 @@ class AddPatient extends Component {
         return result;
       }
     HandleUserInput=(e)=>{
-        var patient = this.state.Patient;
-        patient[e.target.name] = e.target.value
-        this.setState({Patient : patient})
+        const Patient = this.state.Patient;
+        Patient[e.target.name] = e.target.value
+        this.setState({Patient : Patient})
+        //this.state.Patient[e.target.name] = e.target.value
     }
     SetStateOfProps(data)
     {
         this.setState({Patient : data})
         this.setState({IsLoading : false});
     }
-    async componentWillMount(){
+    async componentDidMount(){
         await this.GetPatient(this.state.UserID).then(res =>{
             //this.SetStateOfProps(res)
         })
@@ -180,11 +177,24 @@ class AddPatient extends Component {
                 dangerMode: true
               })
             }
-            this.componentWillMount()
+            //this.componentWillMount()
             this.setState({IsLoading : false})
           })
     }
     setRedirectToMedicalHistory=()=>this.setState({Redirect : true})
+    formatDate(date) {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+    
+        if (month.length < 2) 
+            month = '0' + month;
+        if (day.length < 2) 
+            day = '0' + day;
+    
+        return [year, month, day].join('-');
+    }
      render () {
          if(this.state.Redirect)
          {
@@ -216,7 +226,7 @@ class AddPatient extends Component {
                    <div class="form-group">
                <InputField className = {"form-control"}
                type = {"text"}
-               id = {'FirstNameFieldName'}
+               id = {'FirstName'}
                name = {"FirstName"}
                value = {this.state.Patient.FirstName}
                onChange={this.HandleUserInput}
@@ -225,7 +235,7 @@ class AddPatient extends Component {
    
                <InputField className = {"form-control"}
                type = {"text"}
-               id = {'LastNameFieldName'}
+               id = {'LastName'}
                name = {"LastName"}
                value = {this.state.Patient.LastName}
                onChange={this.HandleUserInput}
@@ -234,7 +244,7 @@ class AddPatient extends Component {
    
                <InputField className = {"form-control"}
                type = {"text"}
-               id = {'MobilePhoneFieldName'}
+               id = {'MobilePhone'}
                name = {"PhoneNumber"}
                value = {this.state.Patient.PhoneNumber}
                onChange={this.HandleUserInput}
@@ -244,10 +254,16 @@ class AddPatient extends Component {
                type = {"date"}
                id = {'DOB'}
                name = {"DOB"}
-               value = {this.state.Patient.DOB}
+               value = {this.formatDate(this.state.Patient.DOB)}
+               timezone=""
                onChange={this.HandleUserInput}
                isValidProperty = {true}>
                </InputField>
+               {/* <input type="datetime" id={'DOB'}
+               name = {"DOB"}
+               value = {this.state.DOB}
+               timezone=""
+               onChange={this.HandleUserInput}/> */}
               
                <div className = "container-login100-form-btn">
                <Button type = {"submit"}

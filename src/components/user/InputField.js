@@ -20,6 +20,7 @@ class InputField extends Component{
                                 </div>
                                 <input
                                 type={this.props.type}
+                                timezone={this.props.timezone}
                                 id={this.props.id}
                                 name={this.props.id}
                                 required
