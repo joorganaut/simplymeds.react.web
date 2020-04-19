@@ -259,11 +259,36 @@ class AddPatient extends Component {
                onChange={this.HandleUserInput}
                isValidProperty = {true}>
                </InputField>
-               {/* <input type="datetime" id={'DOB'}
-               name = {"DOB"}
-               value = {this.state.DOB}
-               timezone=""
-               onChange={this.HandleUserInput}/> */}
+                <div className="row text-center">
+                    <div className="col-lg-4 col-md-8 col-md-12">
+                        <label for="Gender" isValidProperty={true} className="control-label">
+                            Gender
+                        </label>
+                        <div className ={`text-default form-group`}>
+                            <div className="input-group input-group-lg">
+                                <div className="input-group-prepend">
+                                    <span className="input-group-text">
+                                        <i className={''}></i>
+                                    </span>                                    
+                                </div>
+                                <select id="cars" value={this.state.Patient.Gender} 
+                                className="dropdown-menu form-control" 
+                                name='Gender'
+                                onChange={this.HandleUserInput} style={{
+                                    height:46
+                                }}>
+                                <option  value="0">Male</option>
+                                <option  value="1">Female</option>
+                                </select>                               
+                                </div>
+                                <div className="row">
+                                <div className="col-12 mt-2 mb-1">
+                                <small className="text-danger">{''}</small>
+                                 </div>
+                                </div>
+                                </div>
+                             </div>
+                        </div>           
               
                <div className = "container-login100-form-btn">
                <Button type = {"submit"}

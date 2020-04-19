@@ -244,7 +244,7 @@ class SignUp extends Component {
                 } >
                 </InputField>
                 <InputField type = {
-                    "text"
+                    "email"
                 }
                 id = {
                     EmailAddressFieldName

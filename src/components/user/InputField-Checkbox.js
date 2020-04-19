@@ -3,7 +3,7 @@ import InputLabel from './InputLabel';
 import InputFieldError from './InputFieldError';
 import InputLabelValidationIcon from './InputLabelValidationIcon';
 const InputFieldPlaceHolder = 'Required';
-class InputField extends Component{
+class InputFieldCheckBox extends Component{
     render(){
         return(
             <Fragment>
@@ -24,8 +24,8 @@ class InputField extends Component{
                                 id={this.props.id}
                                 name={this.props.id}
                                 required
-                                className="form-control"
-                                placeholder={this.props.placeholder === undefined? InputFieldPlaceHolder : this.props.placeholder}
+                                className={this.props.className === undefined ? "form-check-input" : this.props.className}
+                                placeholder={InputFieldPlaceHolder}
                                 value={this.props.value}
                                 onChange={this.props.onChange}
                                 />
@@ -38,4 +38,4 @@ class InputField extends Component{
         )
     }
 }
-export default InputField;
+export default InputFieldCheckBox;

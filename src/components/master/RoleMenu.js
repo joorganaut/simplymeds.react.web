@@ -1,23 +1,39 @@
 import React, {Component} from 'react'
 import 'react-bootstrap'
-// import logo from "./Pharmacy/css/images/SimplyMeds_logo1.jpeg"
+import Loader from 'react-loader-spinner'
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import logo from "./Pharmacy/css/images/bg_rx3.0.jpg"
+import {Consumer} from '../store/providers/storeContextProvider'; 
+
+
+
 // bg_rx3.0
 class RoleMenu extends Component{
     constructor(props)
     {
         super(props)
+        var CartItems = JSON.parse(localStorage.getItem(`${props.ID}:Cart`))
         this.state = {
             ID : props.ID,
             IsLoggedIn : props.IsLoggedIn,
             Name : props.Name,
-            Roles : props.Role,
             MenuItems : props.MenuItems,
-            CartItems : []//localStorage.getItem(`${props.ID}:Cart`)
+            CartItems : CartItems,
+            CartCount : CartItems === null?0:CartItems.length,
+            CartLoading : this.props.ReloadCart
         }
     }
+    OnAddToCart=()=>{
+        var CartItems = JSON.parse(localStorage.getItem(`${this.state.ID}:Cart`))
+        this.setState({CartCount: CartItems === null?0:CartItems.length})
+    }
+      
+    componentWillMount(){
+        //alert('Hello World')
+    }
     renderCartNumber=()=>{
-        return this.state.CartItems.length
+        this.state.CartCount = this.state.CartItems.length
+        return this.props.CartCount
     }
     Logout=()=>{
         localStorage.removeItem('User')
@@ -52,15 +68,38 @@ class RoleMenu extends Component{
                     this.getMenuItemsDIV(x);
                 })}
                 <a class="dropdown-item" href={"/patient-details/?id="+this.state.ID}>Personal Details</a>
+                <a class="dropdown-item" href={"/product-details/?id="+this.state.ID}>Products</a>
               <a class="dropdown-item" href="/" onClick={this.Logout}>Logout</a>
             </div> </li>)
     }
+    setLoading=(e)=>{
+        this.state.CartLoading = true;
+    }
     renderMenu=()=>{
+        if(this.state.CartLoading === true)
+        {
+            return(
+                <center>
+                <div>Please hold on.....
+                    <Loader
+             type="Puff"
+             color="#00BFFF"
+             height={100}
+             width={100}/>
+            {/* //  timeout={10000} */}
+                </div>
+                </center>
+            )
+        }
+        else{
         //alert(this.state.IsLoggedIn)
         if(this.state.IsLoggedIn)
         {
             return <React.Fragment>
-<nav className="main-nav navbar navbar-fixed navbar-expand-lg text-dark navbar-light" >
+<nav className="main-nav navbar navbar-fixed navbar-expand-lg text-dark navbar-light" style={
+    {
+        
+    }}>
                 <a className="navbar-brand" href="/">
                 <img alt="" src={logo} className="logo" style={
                     {
@@ -78,10 +117,11 @@ class RoleMenu extends Component{
                     <ul className="navbar-nav mr-auto">
                         
                         <li className="nav-item">
-                            <a className="nav-link" href="/About">Home</a>
+                        {/* <a class="active" title="home" href="/"  onClick={this.state.homeAction}><i class="fa fa-home"></i></a>  */}
+                            <a className="nav-link" href="#"><i class="fa fa-home">Home</i></a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="/Contact">Store</a>
+                            <a className="nav-link" href="/Store"><i class="fa fa-shopping-cart">Store</i></a>
                         </li>
                         <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="/" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -161,9 +201,19 @@ class RoleMenu extends Component{
           {this.renderListItemsDIV()}
       <li className="nav-item">
       <div class="icons text-dark">
-                        <a href="cart.html" class="icons-btn d-inline-block bag">
+                        <a href="/cart" class="icons-btn d-inline-block bag">
                             <span class="icon-shopping-bag"></span>
-            <span class="number">{this.state.CartItems.length}</span>
+            <span class="number btn-danger">
+                <Consumer>
+                {
+                    (value) =>
+                    (value.state.CartCount !== null ? value.state.CartCount : 0)
+                }
+                </Consumer>
+                {/* {
+            this.state.CartCount
+            } */}
+            </span>
                         </a>
                         
                     </div>
@@ -218,10 +268,12 @@ class RoleMenu extends Component{
             </React.Fragment>
         }
     }
+}
     render(){
         return(
             this.renderMenu()
         )
     }
 }
+
 export default RoleMenu

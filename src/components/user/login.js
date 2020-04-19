@@ -4,6 +4,7 @@ import Axios from 'axios'
 import { Redirect } from 'react-router-dom'
 import Button from './Button'
 import swal from 'sweetalert';
+import Consumer from '../store/providers/UserContextProvider'
 import "./Login/css/main.css";
 import "./Login/css/util.css";
 import "./Login/vendor/bootstrap/css/bootstrap.min.css";
@@ -54,9 +55,11 @@ class Login extends Component{
             MenuItems : []
           }
           //debugger
+
           localStorage.setItem('User', JSON.stringify(result));
           this.setState({redirect : true})
           this.setState({redirectPath : '/'});
+          this.state.User = ["Customer", "InventoryManager"];
           //history.push('/')
         }
         else
@@ -85,7 +88,7 @@ class Login extends Component{
   }
   renderRedirect(path) 
   {
-    return <Redirect to = {path}/>
+    return <Redirect to = {{pathname : path, state : this.state.User}}/>
 }
 render(){
   if(this.state.redirect)
