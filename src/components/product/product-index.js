@@ -17,7 +17,6 @@ import LoginBackground from "../master/Pharmacy/images/bg-01_old.jpg";
 import RxComponent from '../master/BaseLoadingComponent'
 import ProductToolbar from './product-toolbar'
 import ContainerUnit from './ContainerUnit'
-import CartButton from '../store/AddToCartButton'
 
 class ProductIndex extends RxComponent {
     constructor(props)
@@ -31,9 +30,10 @@ class ProductIndex extends RxComponent {
             ProductPrice : 0,
             ProductCost : 0,
             ContainerUnit : 0,
-            IsPrescription : false,
+            IsPrescription : '',
             Tags : '',
             Image : {},
+            ImageString : '',
             Description : '',
             ErrorMessage : {
                 ProductName : '',
@@ -64,18 +64,20 @@ class ProductIndex extends RxComponent {
         this.handleFormSubmit = this.handleFormSubmit.bind(this)
         this.renderRedirect = this.renderRedirect.bind(this)
         this.TestAdd = this.TestAdd.bind(this)
+        this.ViewPreview = this.ViewPreview.bind(this)
+        this.ViewAllProducts = this.ViewAllProducts.bind(this)
     }
     ContainerUnits = ContainerUnit();
     SaveForm=(e)=>{
         
     }
-    ViewPreview=(e)=>{
-        this.HandleRedirect('/product-preview/')
-    }
+    // ViewPreview=(e)=>{
+    //     this.HandleRedirect('/product-preview/')
+    // }
     
-    ViewAllProducts=(e)=>{
-        this.HandleRedirect('/product-all/')
-    }
+    // ViewAllProducts=(e)=>{
+    //     this.HandleRedirect('/product-all/')
+    // }
     TestAdd(){
         var num = this.state.testValue;
         if(num === undefined)
@@ -99,12 +101,13 @@ class ProductIndex extends RxComponent {
                 </Consumer> */}
             </label></b></h2></center></legend>
         </div>
-        <ProductToolbar saveAction={this.SaveForm} previewAction={this.ViewPreview} searchAction={this.ViewAllProducts}></ProductToolbar>
+        
         <div className="row">
         <div className = "text-center card-body wrap-login100 p-l-55 p-r-55 p-t-80 p-b-30" >
                 <form onSubmit = {
                     this.handleSubmitForm
                 } class="well form-horizontal">
+                    <ProductToolbar saveAction={this.SaveForm} previewAction={this.ViewPreview} searchAction={this.ViewAllProducts}></ProductToolbar>
                     <fieldset>
                     <center>
                     <div className="form-group text-center justify-content-center ">
@@ -245,7 +248,7 @@ class ProductIndex extends RxComponent {
                                 <select id="IsPrescription" value={this.state.IsPrescription} 
                                 className="dropdown-menu form-control" 
                                 name='IsPrescription'
-                                onChange={this.HandleUserInput} style={{
+                                onChange={this.handleUserInput} style={{
                                     height:46
                                 }}>
                                     <option  selected>{'select....'}</option>
@@ -310,7 +313,7 @@ class ProductIndex extends RxComponent {
                                 required
                                 rows="3"
                                 placeholder="description"
-                                onChange={this.HandleUserInput}>
+                                onChange={this.handleUserInput}>
                                    
                                 </textarea>                               
                                 </div>
@@ -342,7 +345,7 @@ class ProductIndex extends RxComponent {
                                 required
                                 rows="3"
                                 placeholder="tags"
-                                onChange={this.HandleUserInput}>
+                                onChange={this.handleUserInput}>
                                     
                                 </textarea>                               
                                 </div>
@@ -371,10 +374,50 @@ class ProductIndex extends RxComponent {
     OnAddToCart=()=>{
         this.props.OnAddToCart()
     }
+    ViewPreview=(e)=>{
+        var data = {
+            Name : this.state.ProductName,
+            Cost : this.state.ProductCost,
+            IsPrescription : this.state.IsPrescription,
+            Price : this.state.ProductPrice,
+            Unit : this.ContainerUnits.filter(x=> x.Value === this.state.ContainerUnit)[0].Name,
+            Description : this.state.Description,
+            Tags : this.state.Tags,
+            Image : this.state.ImageString
+        }
+        this.HandleRedirect('/product-preview/', data)
+    }
+    
+    ViewAllProducts=(e)=>{
+        this.HandleRedirect('/product-all/', {})
+    }
     handleFormSubmit=(e)=>{
 
     }
+    getBase64(file, cb) {
+        let reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+            cb(reader.result)
+        };
+        reader.onerror = function (error) {
+            console.log('Error: ', error);
+        };
+    }
     handleUserInput=(e)=>{
+        if(e.target.name === 'Image')
+        {
+            var file = e.target.files[0];
+            var result = '';
+            var reader = new FileReader()
+            reader.onload=()=>{
+                result = reader.result
+                this.setState({ImageString : result})
+            }
+            reader.readAsDataURL(file)
+            //this.getBase64(file, (x)=>{result = x})
+            
+        }
         this.setState({[e.target.name] : e.target.value})
         this.ValidateControls(e.target.name, e.target.value)
     }

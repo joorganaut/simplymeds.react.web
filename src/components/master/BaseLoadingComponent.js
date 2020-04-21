@@ -11,13 +11,15 @@ class BaseLoadingComponent extends Component{
         this.state = {
                 UserID : props.UserID,
                 testValue : 0,
+                Product : props.Values,
                 Roles : props.Roles,
                 IsLoading : true,
                 Redirect : false,
                 RedirectPath : '/',
-                ComponentFunction : props.ComponentFunction
+                ComponentFunction : props.ComponentFunction,
+                RedirectParams : {}
         }
-        this.TestAdd = this.TestAdd.bind(this)
+        this.TestAdd = this.TestAdd.bind(this)        
     }
     PageRoles = []
     IsInRole = false;
@@ -28,9 +30,10 @@ class BaseLoadingComponent extends Component{
         var state = this.ValidateRoles();
         this.setState({IsInRole : state})
     }
-    HandleRedirect=(path)=>{
-        this.setState({RedirectPath : path, Redirect : true})       
+    HandleRedirect=(path, RedirectParams)=>{
+        this.setState({RedirectPath : path, Redirect : true, RedirectParams : RedirectParams})       
     }
+    
     ValidateRoles=()=>{
         var state = false;
         if(this.state.Roles !== undefined )
@@ -56,8 +59,10 @@ class BaseLoadingComponent extends Component{
             </center>
         )
     }
-    renderRedirect = (path) => {
-        return <Redirect to = {path}/>
+    renderRedirect = (path, obj) => {
+        return <Redirect to = {{pathname : path, state : {
+            Values : obj
+        }}}/>
      }
     renderAllComponents=()=>{
         //this.ValidateRoles();
@@ -68,7 +73,7 @@ class BaseLoadingComponent extends Component{
        
         if(this.state.Redirect === true)
         {
-            return this.renderRedirect(this.state.RedirectPath)
+            return this.renderRedirect(this.state.RedirectPath, this.state.RedirectParams)
         }
         if(this.state.IsLoading === true)
         {

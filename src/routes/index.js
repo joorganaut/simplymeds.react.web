@@ -1,11 +1,12 @@
 import React from 'react';
-import {Switch, Route} from 'react-router-dom';
+import {BrowserRouter, Switch, Route} from 'react-router-dom';
 import Signin from '../components/Pages/home-sign'
 import Signup from '../components/Pages/home-signup'
 import Index from '../components/Pages/home-index'
 import PatientIndex from '../components/Pages/patient-index'
 import PatientMedicals from '../components/Pages/patient-medicals'
 import ProductIndex from '../components/Pages/product-index'
+import ProductPreview from '../components/Pages/product-preview'
 import AuthenticatedRoute from '../routes/AuthenticatedRoute'
 let getUserRoles=(id)=>{
 
@@ -25,6 +26,7 @@ export default function Routes (){
         }
     }
     return(
+        <BrowserRouter>
     <Switch>
         <Route path='/' exact component={Index}/>
         <Route path='/signin' component={Signin}/>
@@ -33,9 +35,10 @@ export default function Routes (){
         <Route path='/patient-details/*' component={PatientIndex}/>
         <Route path='/patient-medicals/*' component={PatientMedicals}/>
         <Route path='/product-details/*' component={ProductIndex}/>
-        <Route path='/product-preview/' component={Signup}/>
+        <Route path='/product-preview/*' component={ProductPreview}/>
         <Route path='/product-all/' component={Signin}/>
         <Route component={Index} />
     </Switch>
+    </BrowserRouter>
     );
 }
