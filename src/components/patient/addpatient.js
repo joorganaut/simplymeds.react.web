@@ -262,7 +262,7 @@ class AddPatient extends Component {
                     <div className="col-lg-4 col-md-8 col-md-12">
                     <img src={
                             this.state.Patient !== undefined 
-                            ? this.state.Patient.ImageString !== undefined
+                            ? this.state.Patient.ImageString !== undefined && this.state.Patient.ImageString !== ""
                             ? this.state.Patient.ImageString: NoImage : NoImage
                         } alt='' style={{
                             height : 150,

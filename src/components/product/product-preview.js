@@ -2,7 +2,7 @@ import React from 'react'
 import RxComponent from '../master/BaseLoadingComponent'
 import ProductToolbar from './product-toolbar'
 import LoginBackground from "../master/Pharmacy/images/bg-01_old.jpg";
-import NoImage from '../master/Pharmacy/css/images/No_Image_Available.jpg'
+import NoImage from '../master/Pharmacy/images/No_Image_Available.jpg'
 import ContainerUnit from './ContainerUnit'
 class ProductPreview extends RxComponent
 {
@@ -79,7 +79,7 @@ class ProductPreview extends RxComponent
                             {/* <span class="tag align-top">View</span> */}
                             <a href="#/">
                                  <img src={
-                                     this.state.Product !== undefined ? this.state.Product.Image : NoImage
+                                     this.state.Product !== undefined && this.state.Product.Image !== ""? this.state.Product.Image : NoImage
                                     } alt='' style={{
                                      height : 300,
                                      width : 250
