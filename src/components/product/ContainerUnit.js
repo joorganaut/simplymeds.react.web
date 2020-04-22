@@ -1,27 +1,25 @@
-const ContainerUnit=()=>{
-    return( [
-    {
-        Name : 'Tablet',
-        Value : 0
-    },
-    {
-        Name : 'Satchet',
-        Value : 1
-    },
-    {
-        Name : 'Packet',
-        Value : 2
-    },
-    {
-        Name : 'Vial',
-        Value : 3
-    },
-    {
-        Name : 'Bottle',
-        Value : 4
-    }
-])
-}
+const ContainerUnit = [
+        {
+            Name: 'Tablet',
+            Value: 0
+        },
+        {
+            Name: 'Satchet',
+            Value: 1
+        },
+        {
+            Name: 'Packet',
+            Value: 2
+        },
+        {
+            Name: 'Vial',
+            Value: 3
+        },
+        {
+            Name: 'Bottle',
+            Value: 4
+        }
+    ]
 export default ContainerUnit
 /*Tablet = 0,
         Satchet = 1,

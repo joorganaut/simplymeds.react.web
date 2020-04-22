@@ -9,10 +9,10 @@ class Home extends Component {
   {
     super(props)
     var userID = new URLSearchParams(this.props.location.search).get("id");
-    var state = this.props.location.state !== undefined ? this.props.location.state.Values : {};
+    //var state = this.props.location.state !== undefined ? this.props.location.state.Values : {};
     this.state = {
       UserID : userID,
-      Values : state
+      //Values : state
     } 
   }
   
@@ -20,7 +20,7 @@ class Home extends Component {
       return (
         <div>
         <Index ></Index>
-        <Body  UserID = {this.state.UserID} Roles={['InventoryManager', 'Customer']} Values={this.state.Values}></Body>
+        <Body  UserID = {this.state.UserID} Roles={['InventoryManager', 'Customer']} ></Body>
         <Footer></Footer>
         </div>
     );

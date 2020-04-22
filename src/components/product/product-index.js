@@ -1,16 +1,8 @@
-import React, {
-    Component
-} from 'react'
-import {
-    Redirect
-} from 'react-router-dom'
+import React from 'react'
 import Axios from 'axios'
 import swal from 'sweetalert';
-import Loader from 'react-loader-spinner'
 import InputField from '../user/InputField'
 import InputLabel from '../user/InputLabel'
-import Button from '../user/Button'
-import {Button as ModalButton} from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import LoginBackground from "../master/Pharmacy/images/bg-01_old.jpg";
@@ -18,45 +10,65 @@ import RxComponent from '../master/BaseLoadingComponent'
 import ProductToolbar from './product-toolbar'
 import ContainerUnit from './ContainerUnit'
 
+const ProductNameFieldName = 'ProductName';
+const ProductPriceFieldName = 'ProductPrice';
+const ContainerUnitFieldName = 'ContainerUnit'
+const DescriptionFieldName = 'Description';
+const ProductNameMinLength = 5;
+const ProductNameMaxLength = 30;
+const ProductPriceMinValue = 0;
+const ProductNameInvalidErrorMessage = `Product Name must be between ${ProductNameMinLength} - ${ProductNameMaxLength} characters`;
+const ProductPriceInvalidErrorMessage = `Product must have a price greater than ${ProductPriceMinValue}`;
+const DescriptionInvalidErrorMessage = `Product must have a description`;
+const ContainerUnitErrorMessage = `A sale unit must be specified`;
+
+
 class ProductIndex extends RxComponent {
     constructor(props)
     {
+        var data = JSON.parse(localStorage.getItem('ProductData'))
         super(props)
         this.state = {
             testValue : 0,
             Roles : props.Roles,
             Redirect : {},
-            ProductName : '',
-            ProductPrice : 0,
-            ProductCost : 0,
-            ContainerUnit : 0,
-            IsPrescription : '',
-            Tags : '',
+            ProductName : data !== null?data.Name: '',
+            ProductPrice : data !== null?data.Price: 0,
+            ProductCost : data !== null?data.Cost: 0,
+            ContainerUnit : data !== null?data.Unit: '',
+            IsPrescription : data !== null?data.IsPrescription: '',
+            IsDiscounted : data !== null?data.IsDiscounted: '',
+            DiscountPrice : data !== null?data.DiscountPrice: 0,
+            Tags : data !== null?data.Tags: '',
             Image : {},
-            ImageString : '',
-            Description : '',
+            ImageString : data !== null?data.Image: '',
+            Description : data !== null ? data.Description : '',
             ErrorMessage : {
                 ProductName : '',
                 ProductPrice : '',
                 ProductCost : '',
                 ContainerUnit : '',
                 IsPrescription : '',
+                IsDiscounted : '',
+                DiscountPrice : '',
                 Tags : '',
                 Image : '',
                 Description : '',
             },
             ControlValid : {
-                ProductName : false,
-                ProductPrice : false,
+                ProductName : data !== null && data.Name !== null?true : false,
+                ProductPrice : data !== null && data.Price !== null?true : false,
                 ProductCost : false,
-                ContainerUnit : false,
+                ContainerUnit : data !== null && data.Unit !== null?true : false,
+                IsDiscounted : false,
                 IsPrescription : false,
+                DiscountPrice : false,
                 Tags : true,
                 Image : false,
-                Description : false,
+                Description : data !== null && data.Description !== null?true : false,
             },
             ComponentFunction : this.renderPage(),
-            FormIsValid : false,
+            FormIsValid : true,
         }
         
         this.PageRoles.push("InventoryManager")
@@ -67,24 +79,38 @@ class ProductIndex extends RxComponent {
         this.ViewPreview = this.ViewPreview.bind(this)
         this.ViewAllProducts = this.ViewAllProducts.bind(this)
     }
-    ContainerUnits = ContainerUnit();
-    SaveForm=(e)=>{
-        
-    }
-    // ViewPreview=(e)=>{
-    //     this.HandleRedirect('/product-preview/')
-    // }
-    
-    // ViewAllProducts=(e)=>{
-    //     this.HandleRedirect('/product-all/')
-    // }
-    TestAdd(){
-        var num = this.state.testValue;
-        if(num === undefined)
-        {
-            num = 0;
-        }
-        this.setState({testValue : num + 1})
+    //ContainerUnits = ContainerUnit();
+    SaveForm = async (data) => {
+        // AddProductDetails
+        this.setState({
+            IsLoading: true
+        })
+        await Axios.post(process.env.REACT_APP_MIDDLEWARE + '/api/AddProductDetails', data).then(async res => {
+            if (res.data.Code === '00') {
+                await swal({
+                    title: "Success!",
+                    text: `Product details saved successfully`,
+                    icon: "success",
+                    button: {
+                        text: "Ok",
+                        closeModal: true,
+                    },
+                    dangerMode: true
+                })
+                this.ClearForm()
+            } else {
+                swal({
+                    title: "Error!",
+                    text: "Unable to save product details: " + res.data.Messages,
+                    icon: "error",
+                    button: {
+                        text: "Ok",
+                        closeModal: true,
+                    },
+                    dangerMode: true
+                })
+            }
+        })
     }
     renderPage=()=>{
         return(<>
@@ -107,7 +133,12 @@ class ProductIndex extends RxComponent {
                 <form onSubmit = {
                     this.handleSubmitForm
                 } class="well form-horizontal">
-                    <ProductToolbar saveAction={this.SaveForm} previewAction={this.ViewPreview} searchAction={this.ViewAllProducts}></ProductToolbar>
+                    <ProductToolbar 
+                    homeAction={this.GoHome}
+                    saveAction={this.handleFormSubmit} 
+                    clearAction={this.ClearForm}
+                    previewAction={this.ViewPreview} 
+                    searchAction={this.ViewAllProducts}></ProductToolbar>
                     <fieldset>
                     <center>
                     <div className="form-group text-center justify-content-center ">
@@ -121,10 +152,10 @@ class ProductIndex extends RxComponent {
                     "product name...."
                 }
                 id = {
-                    'ProductName'
+                    ProductNameFieldName
                 }
                 name = {
-                    "Product Name"
+                    'Product Name'
                 }
                 fontAwesomeIcon = {
                     "fas fa-info"
@@ -149,10 +180,10 @@ class ProductIndex extends RxComponent {
                     "price...."
                 }
                 id = {
-                    'ProductPrice'
+                    ProductPriceFieldName
                 }
                 name = {
-                    "Price"
+                    'Product Price'
                 }
                 fontAwesomeIcon = {
                     "fas fa-money"
@@ -180,7 +211,7 @@ class ProductIndex extends RxComponent {
                     'ProductCost'
                 }
                 name = {
-                    "Cost"
+                    "Cost Price"
                 }
                 fontAwesomeIcon = {
                     "fas fa-money"
@@ -192,7 +223,7 @@ class ProductIndex extends RxComponent {
                     this.handleUserInput
                 }
                 isValidProperty = {
-                    this.state.ControlValid !== undefined ? this.state.ControlValid.ProductCost : false
+                    true
                 }
                 errorMessage = {
                     this.state.ErrorMessage !== undefined ? this.state.ErrorMessage.ProductCost : ''
@@ -212,13 +243,13 @@ class ProductIndex extends RxComponent {
                                     </span>                                    
                                 </div>
                                 <select id="ContainerUnit" value={this.state.ContainerUnit} 
-                                className="dropdown-menu form-control" 
-                                name='ContainerUnit'
-                                onChange={this.HandleUserInput} style={{
-                                    height:46
+                                className="form-control" 
+                                name={ContainerUnitFieldName}
+                                onChange={this.handleUserInput} style={{
+                                    height:48
                                 }}>
                                     <option  selected>{'unit per sale....'}</option>
-                                    {this.ContainerUnits.map(x=>{
+                                    {ContainerUnit.map(x=>{
                                         return<option  value={x.Value}>{x.Name}</option>
                                     })}
                                 </select>                               
@@ -236,7 +267,7 @@ class ProductIndex extends RxComponent {
                         <div className="row text-center">
                     <div className="col-lg-4 col-md-8 col-md-12">
                     <InputLabel  name="Requires Prescription" isValidProperty={
-                        this.state.ControlValid !== undefined ? this.state.ControlValid.IsPrescription : false
+                        true
                         }></InputLabel>
                         <div className ={`text-default form-group`}>
                             <div className="input-group input-group-lg">
@@ -246,10 +277,10 @@ class ProductIndex extends RxComponent {
                                     </span>                                    
                                 </div>
                                 <select id="IsPrescription" value={this.state.IsPrescription} 
-                                className="dropdown-menu form-control" 
+                                className="form-control" 
                                 name='IsPrescription'
                                 onChange={this.handleUserInput} style={{
-                                    height:46
+                                    height:48
                                 }}>
                                     <option  selected>{'select....'}</option>
                                     <option  value={true}>{'Yes'}</option>
@@ -282,19 +313,80 @@ class ProductIndex extends RxComponent {
                 fontAwesomeIcon = {
                     "fas fa-camera"
                 }
-                value = {
-                    this.state.Image
+                value = {''
+                    //this.state.Image
                 }
                 onChange = {
                     this.handleUserInput
                 }
                 isValidProperty = {
-                    this.state.ControlValid !== undefined ? this.state.ControlValid.Image : false
+                    true
                 }
                 errorMessage = {
                     this.state.ErrorMessage !== undefined ? this.state.ErrorMessage.Image : ''
                 } >
                 </InputField>
+               <div className="row text-center">
+                    <div className="col-lg-4 col-md-8 col-md-12">
+                    <InputLabel  name="Discounted" isValidProperty={
+                        true
+                        }></InputLabel>
+                        <div className ={`text-default form-group`}>
+                            <div className="input-group input-group-lg">
+                                <div className="input-group-prepend">
+                                    <span className="input-group-text">
+                                        <i className={'fas fa-percent'}></i>
+                                    </span>                                    
+                                </div>
+                                <select id="IsDiscounted" value={this.state.IsDiscounted} 
+                                className="form-control" 
+                                name='IsDiscounted'
+                                onChange={this.handleUserInput} style={{
+                                    height:48
+                                }}>
+                                    <option  selected>{'select....'}</option>
+                                    <option  value={true}>{'Yes'}</option>
+                                    <option  value={false}>{'No'}</option>
+                                </select>                               
+                                </div>
+                                <div className="row">
+                                <div className="col-12 mt-2 mb-1">
+                                <small className="text-danger">{
+                                this.state.ErrorMessage !== undefined ? this.state.ErrorMessage.IsDiscounted : ''
+                                }</small>
+                                 </div>
+                                </div>
+                                </div>
+                             </div>
+                        </div> 
+                <InputField type = {
+                    "number"
+                }
+                placeholder = {
+                    "discount price...."
+                }
+                id = {
+                    'DiscountPrice'
+                }
+                name = {
+                    "Discount Price"
+                }
+                fontAwesomeIcon = {
+                    "fas fa-money"
+                }
+                value = {
+                    this.state.DiscountPrice
+                }
+                onChange = {
+                    this.handleUserInput
+                }
+                isValidProperty = {
+                    true
+                }
+                errorMessage = {
+                    this.state.ErrorMessage !== undefined ? this.state.ErrorMessage.DiscountPrice : ''
+                } >
+                </InputField> 
                 <div className="row text-center">
                     <div className="col-lg-4 col-md-8 col-md-12">
                     <InputLabel  name="Description" isValidProperty={
@@ -309,7 +401,7 @@ class ProductIndex extends RxComponent {
                                 </div>
                                 <textarea id="Description" value={this.state.Description} 
                                 className="form-control" 
-                                name='Description'
+                                name={DescriptionFieldName}
                                 required
                                 rows="3"
                                 placeholder="description"
@@ -330,7 +422,7 @@ class ProductIndex extends RxComponent {
                         <div className="row text-center">
                     <div className="col-lg-4 col-md-8 col-md-12">
                     <InputLabel  name="Tags" isValidProperty={
-                        this.state.ControlValid !== undefined ? this.state.ControlValid.Tags : false
+                        true
                         }></InputLabel>
                         <div className ={`text-default form-group`}>
                             <div className="input-group input-group-lg">
@@ -344,7 +436,7 @@ class ProductIndex extends RxComponent {
                                 name='Tags'
                                 required
                                 rows="3"
-                                placeholder="tags"
+                                placeholder="#painkiller, #headache, #fever"
                                 onChange={this.handleUserInput}>
                                     
                                 </textarea>                               
@@ -371,43 +463,109 @@ class ProductIndex extends RxComponent {
         </div>
         </>)
     }
-    OnAddToCart=()=>{
-        this.props.OnAddToCart()
-    }
+    
     ViewPreview=(e)=>{
         var data = {
             Name : this.state.ProductName,
             Cost : this.state.ProductCost,
             IsPrescription : this.state.IsPrescription,
             Price : this.state.ProductPrice,
-            Unit : this.ContainerUnits.filter(x=> x.Value === this.state.ContainerUnit)[0].Name,
+            Unit : this.state.ContainerUnit,
             Description : this.state.Description,
             Tags : this.state.Tags,
-            Image : this.state.ImageString
+            Image : this.state.ImageString,
+            IsDiscounted : this.state.IsDiscounted,
+            DiscountPrice : this.state.DiscountPrice
         }
+        localStorage.setItem('ProductData', JSON.stringify(data))
         this.HandleRedirect('/product-preview/', data)
+    }
+    ClearForm=()=>{        
+            this.setState({ProductName : '',
+            ProductCost : 0,
+            IsPrescription : '',
+            ProductPrice : 0,
+            ContainerUnit : '',
+            Description : '',
+            Tags : '',
+            ImageString : '',
+            IsDiscounted : '',
+            DiscountPrice : 0
+    })
+        localStorage.removeItem('ProductData')
+        // this.HandleRedirect('/product-details/')
     }
     
     ViewAllProducts=(e)=>{
         this.HandleRedirect('/product-all/', {})
     }
-    handleFormSubmit=(e)=>{
-
-    }
-    getBase64(file, cb) {
-        let reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = function () {
-            cb(reader.result)
-        };
-        reader.onerror = function (error) {
-            console.log('Error: ', error);
-        };
+    handleFormSubmit = (e) => {
+        if (this.state.FormIsValid) {
+            try{
+                var data = {
+                    Name : this.state.ProductName,
+                    ImageString : this.state.ImageString,
+                    Cost : this.state.ProductCost,
+                    Price : this.state.ProductPrice,
+                    ContainerUnit : this.state.ContainerUnit,
+                    RequiresPrescription : this.state.IsPrescription,
+                    Discounted : this.state.Discounted,
+                    DiscountPrice : this.state.DiscountPrice,
+                    Description : this.state.Description,
+                    Tags : this.state.Tags
+                }
+                swal({
+                    title: "Alert",
+                    text: `Are you sure?`,
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                }).then(async s => {
+                    if (s) {
+                        await this.SaveForm(data).then(async () => {
+                            // await this.componentDidMount().then(() => {
+                                
+                            // })
+                            this.setState({
+                                IsLoading: false
+                            });
+                        })
+                    }
+                })
+            }
+            catch(error)
+            {
+                swal({
+                    title: "Error!",
+                    text: "Unable to save product info: " + e.message,
+                    icon: "error",
+                    button: {
+                        text: "Ok",
+                        closeModal: true,
+                    },
+                    dangerMode: true
+                })
+            }            
+        }
     }
     handleUserInput=(e)=>{
         if(e.target.name === 'Image')
         {
             var file = e.target.files[0];
+            if(file.size > 100000)
+            {
+                swal({
+                    title: "Error!",
+                    text: "File greater than 100kb",
+                    icon: "error",
+                    button: {
+                      text: "Ok",
+                      closeModal: true,
+                    },
+                    dangerMode: true
+                  })
+                return;
+            }
             var result = '';
             var reader = new FileReader()
             reader.onload=()=>{
@@ -421,12 +579,54 @@ class ProductIndex extends RxComponent {
         this.setState({[e.target.name] : e.target.value})
         this.ValidateControls(e.target.name, e.target.value)
     }
-    ValidateControls=(name, value)=>{
+    validateForm() {
+        this.setState({
+            formValid: this.state.ControlValid.ProductName &&
+            this.state.ControlValid.ProductPrice &&
+            this.state.ControlValid.ContainerUnit &&
+            this.state.ControlValid.Description
+        });
+    }
+    ValidateControls=(fieldName, value)=>{
+        let fieldValidationErrors = this.state.ErrorMessage;
+        let productNameValid = this.state.ControlValid.ProductName;
+        let productPriceValid = this.state.ControlValid.ProductPrice;
+        let descriptionValid = this.state.ControlValid.Description;
+        let containerUnitValid = this.state.ControlValid.ContainerUnit;
 
+        switch (fieldName) {
+            case ProductNameFieldName:
+                productNameValid = value.length >= ProductNameMinLength && value.length <= ProductNameMaxLength;
+                fieldValidationErrors.ProductName = productNameValid ? '' : ProductNameInvalidErrorMessage;
+                break;
+            case ProductPriceFieldName:
+                productPriceValid = value > 0;
+                fieldValidationErrors.ProductPrice = productPriceValid ? '' : ProductPriceInvalidErrorMessage;
+                break;
+            case DescriptionFieldName:
+                descriptionValid = value.length > 5;
+                fieldValidationErrors.Description = descriptionValid ? '' : DescriptionInvalidErrorMessage;
+                break;
+            case ContainerUnitFieldName:
+                containerUnitValid = value >= 0;
+                fieldValidationErrors.ContainerUnit = containerUnitValid ? '' : ContainerUnitErrorMessage;
+                break;
+            default:
+                break;
+        }
+        var ControlValid = this.state.ControlValid;
+        ControlValid.ProductName = productNameValid
+        ControlValid.ProductPrice = productPriceValid
+        ControlValid.Description = descriptionValid
+        ControlValid.ContainerUnit = containerUnitValid
+        this.setState({
+            ErrorMessage: fieldValidationErrors,
+            ControlValid : ControlValid
+        }, this.validateForm);
     }
     render(){
         return(<>
-        {this.renderAllComponents()}
+        {this.renderAllComponents(this.renderPage())}
         </>)
     }
 }

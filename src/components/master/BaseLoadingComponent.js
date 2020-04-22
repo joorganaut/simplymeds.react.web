@@ -11,7 +11,6 @@ class BaseLoadingComponent extends Component{
         this.state = {
                 UserID : props.UserID,
                 testValue : 0,
-                Product : props.Values,
                 Roles : props.Roles,
                 IsLoading : true,
                 Redirect : false,
@@ -26,9 +25,14 @@ class BaseLoadingComponent extends Component{
     TestAdd(){
         
     }
+    GoHome=()=>{
+        this.HandleRedirect('/')
+    }
     componentWillMount(){
         var state = this.ValidateRoles();
         this.setState({IsInRole : state})
+        
+        //this.setState({Product : data})
     }
     HandleRedirect=(path, RedirectParams)=>{
         this.setState({RedirectPath : path, Redirect : true, RedirectParams : RedirectParams})       
@@ -64,7 +68,7 @@ class BaseLoadingComponent extends Component{
             Values : obj
         }}}/>
      }
-    renderAllComponents=()=>{
+    renderAllComponents=(callback)=>{
         //this.ValidateRoles();
         if (this.state.IsInRole === false) {
             this.state.Redirect = true;
@@ -84,7 +88,7 @@ class BaseLoadingComponent extends Component{
         else{
             return (
                 <>                
-                {this.state.ComponentFunction}
+                {callback}
                 </>
             )
         }

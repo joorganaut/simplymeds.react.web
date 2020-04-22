@@ -13,6 +13,7 @@ import {Button as ModalButton} from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import LoginBackground from "../master/Pharmacy/images/bg-01_old.jpg";
+import NoImage from '../master/Pharmacy/css/images/No_Image_Available.jpg'
 
 class AddPatient extends Component {
     constructor(props) {
@@ -41,8 +42,10 @@ class AddPatient extends Component {
                 dangerMode : true,
               }).then(async s =>{
                 if (s) {
-                    await this.UpdatePatientDetails(data).then(()=>{
-                        this.setState({IsLoading : false});
+                    await this.UpdatePatientDetails(data).then(async ()=>{
+                        await this.componentDidMount().then(()=>{
+                            this.setState({IsLoading : false});
+                        })
                     })
                 }
               })
@@ -70,8 +73,9 @@ class AddPatient extends Component {
         try {
             await Axios.post(process.env.REACT_APP_MIDDLEWARE + '/api/RetrievePatientDetails', data).then(async res => {
                 if (res.data.Code === '00') {
-                    if (res.data.record !== null && res.data.record.length > 0) {
-                        result = res.data.record[0];
+                    if (res.data.record !== null ) {
+                        result = res.data.record;
+                        result.ImageString = res.data.image;
                         this.SetStateOfProps(result)
                         await swal({
                             title: "Success!",
@@ -124,6 +128,35 @@ class AddPatient extends Component {
         return result;
       }
     HandleUserInput=(e)=>{
+        if(e.target.name === 'Image' && e.target.files.length > 0)
+        {
+            var file = e.target.files[0];
+            if(file.size > 100000)
+            {
+                swal({
+                    title: "Error!",
+                    text: "File greater than 100kb",
+                    icon: "error",
+                    button: {
+                      text: "Ok",
+                      closeModal: true,
+                    },
+                    dangerMode: true
+                  })
+                return;
+            }
+            var result = '';
+            var reader = new FileReader()
+            reader.onload=()=>{
+                result = reader.result
+                const Patient = this.state.Patient;
+                Patient.ImageString = result
+                this.setState({Patient : Patient})
+            }
+            reader.readAsDataURL(file)
+            //this.getBase64(file, (x)=>{result = x})
+            
+        }
         const Patient = this.state.Patient;
         Patient[e.target.name] = e.target.value
         this.setState({Patient : Patient})
@@ -224,6 +257,35 @@ class AddPatient extends Component {
                <form method="post" onSubmit = {this.handleSubmitForm} className="well form-horizontal">
                    <legend><center><h2><b>Patient Details</b></h2></center></legend>
                    <div class="form-group">
+                {/* add patient picture */}
+                <div className="row text-center">
+                    <div className="col-lg-4 col-md-8 col-md-12">
+                    <img src={
+                            this.state.Patient !== undefined 
+                            ? this.state.Patient.ImageString !== undefined
+                            ? this.state.Patient.ImageString: NoImage : NoImage
+                        } alt='' style={{
+                            height : 150,
+                            width : 150,
+                            borderRadius : 100
+                         }}/>
+                    <div className ={`text-default form-group`}>
+                            <div className="input-group input-group-lg">
+                                <div className="input-group-prepend">
+                                    <span className="input-group-text">
+                                        <i className={'fas fa-camera'}></i>
+                                    </span>                                    
+                                </div>
+                                <input type="file"                                 
+                                    onChange = {this.HandleUserInput}
+                                    className="form-control"
+                                    name="Image"
+                                    forHtml=''/>
+                                </div>
+                                {/* <InputFieldError errorMessage={this.props.errorMessage}></InputFieldError> */}
+                                </div>
+                             </div>
+                        </div>    
                <InputField className = {"form-control"}
                type = {"text"}
                id = {'FirstName'}

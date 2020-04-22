@@ -13,13 +13,15 @@ class ProductToolBar extends Component{f
             previewAction : props.previewAction,
             deleteAction : props.deleteAction,
             backAction : props.backAction,
+            clearAction : props.clearAction,
             homeDisabled : props.homeDisabled,
             searchDisabled : props.searchDisabled,
             saveDisabled : props.saveDisabled,
             previewDisabled : props.previewDisabled,
             deleteDisabled : props.deleteDisabled,
             editDisabled : props.editDisabled,
-            backDisabled : props.backDisabled
+            backDisabled : props.backDisabled,
+            clearDisabled : props.clearDisabled
         }
     }
     RenderHome=()=>{
@@ -64,6 +66,12 @@ class ProductToolBar extends Component{f
             return <a href="#/" title="back" onClick={this.state.backAction}><i class="fas fa-chevron-left"></i></a>
         }
     }
+    RenderClear=()=>{
+        if(this.state.clearDisabled !== true)
+        {
+            return <a href="#/" title="clear" onClick={this.state.clearAction}><i class="fas fa-eraser"></i></a>
+        }
+    }
     render(){
         return(<>
         <div className="row">
@@ -78,6 +86,7 @@ class ProductToolBar extends Component{f
             
             {this.RenderPreview()}
             {this.RenderDelete()}
+            {this.RenderClear()}
             {this.RenderBack()}
             {/* <a href="" title="clear"><i class="fas fa-trash"  onClick={this.state.deleteAction} disabled={this.state.deleteDisabled}></i></a>  */}
         </div>
