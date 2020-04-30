@@ -6,8 +6,8 @@ import Index from '../components/Pages/home-index'
 import PatientIndex from '../components/Pages/patient-index'
 import PatientMedicals from '../components/Pages/patient-medicals'
 import ProductIndex from '../components/Pages/product-index'
+import ProductAll from '../components/Pages/product-all'
 import ProductPreview from '../components/Pages/product-preview'
-import AuthenticatedRoute from '../routes/AuthenticatedRoute'
 let getUserRoles=(id)=>{
 
 }
@@ -26,7 +26,7 @@ export default function Routes (){
         }
     }
     return(
-        <BrowserRouter>
+    <BrowserRouter>
     <Switch>
         <Route path='/' exact component={Index}/>
         <Route path='/signin' component={Signin}/>
@@ -36,7 +36,7 @@ export default function Routes (){
         <Route path='/patient-medicals/*' component={PatientMedicals}/>
         <Route path='/product-details/*' component={ProductIndex}/>
         <Route path='/product-preview/*' component={ProductPreview}/>
-        <Route path='/product-all/' component={Signin}/>
+        <Route path='/product-all/*' component={ProductAll}/>
         <Route component={Index} />
     </Switch>
     </BrowserRouter>

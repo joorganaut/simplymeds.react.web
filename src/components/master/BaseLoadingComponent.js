@@ -16,6 +16,7 @@ class BaseLoadingComponent extends Component{
                 Redirect : false,
                 RedirectPath : '/',
                 ComponentFunction : props.ComponentFunction,
+                ComponentLoadingMethod : props.ComponentLoadingMethod,
                 RedirectParams : {}
         }
         this.TestAdd = this.TestAdd.bind(this)        
@@ -31,7 +32,7 @@ class BaseLoadingComponent extends Component{
     componentWillMount(){
         var state = this.ValidateRoles();
         this.setState({IsInRole : state})
-        
+        return this.state.ComponentLoadingMethod;
         //this.setState({Product : data})
     }
     HandleRedirect=(path, RedirectParams)=>{
@@ -71,7 +72,7 @@ class BaseLoadingComponent extends Component{
     renderAllComponents=(callback)=>{
         //this.ValidateRoles();
         if (this.state.IsInRole === false) {
-            this.state.Redirect = true;
+            this.setState({Redirect : true})
             //return this.renderAllComponents()
         } 
        

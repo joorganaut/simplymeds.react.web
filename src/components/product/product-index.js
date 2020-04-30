@@ -33,6 +33,7 @@ class ProductIndex extends RxComponent {
             Roles : props.Roles,
             Redirect : {},
             ProductName : data !== null?data.Name: '',
+            ProductBrand : data !== null?data.Brand:'',
             ProductPrice : data !== null?data.Price: 0,
             ProductCost : data !== null?data.Cost: 0,
             ContainerUnit : data !== null?data.Unit: '',
@@ -75,7 +76,6 @@ class ProductIndex extends RxComponent {
         
         this.handleFormSubmit = this.handleFormSubmit.bind(this)
         this.renderRedirect = this.renderRedirect.bind(this)
-        this.TestAdd = this.TestAdd.bind(this)
         this.ViewPreview = this.ViewPreview.bind(this)
         this.ViewAllProducts = this.ViewAllProducts.bind(this)
     }
@@ -118,14 +118,7 @@ class ProductIndex extends RxComponent {
         <div className="form form-group container-login100" style = {{backgroundImage: `url(${LoginBackground})`}}>
         <div className = "card-body wrap-login100 p-l-55 p-r-55 p-t-80 p-b-30" >
             <div className="row">
-        <legend><center><h2><b>Product Setup <label >
-        {/* <Consumer>
-                {
-                    (value) =>
-                    {return (value.state.CartCount)}
-                }
-                </Consumer> */}
-            </label></b></h2></center></legend>
+        <legend><center><h2><b>Product Setup </b></h2></center></legend>
         </div>
         
         <div className="row">
