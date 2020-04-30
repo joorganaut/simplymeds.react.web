@@ -14,6 +14,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import LoginBackground from "../master/Pharmacy/images/bg-01_old.jpg";
 import NoImage from '../master/Pharmacy/css/images/No_Image_Available.jpg'
+import imageCompression from 'browser-image-compression';
 
 class AddPatient extends Component {
     constructor(props) {
@@ -145,6 +146,12 @@ class AddPatient extends Component {
                   })
                 return;
             }
+            const options = {
+                maxSizeMB: -10,
+                maxWidthOrHeight: 1024,
+                useWebWorker: true,
+                onProgress: () => null
+            }
             var result = '';
             var reader = new FileReader()
             reader.onload=()=>{
@@ -153,7 +160,10 @@ class AddPatient extends Component {
                 Patient.ImageString = result
                 this.setState({Patient : Patient})
             }
-            reader.readAsDataURL(file)
+            imageCompression(file, options).then(compressedFile => {
+                reader.readAsDataURL(compressedFile)
+            });
+            
             //this.getBase64(file, (x)=>{result = x})
             
         }

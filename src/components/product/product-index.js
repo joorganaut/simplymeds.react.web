@@ -9,6 +9,7 @@ import LoginBackground from "../master/Pharmacy/images/bg-01_old.jpg";
 import RxComponent from '../master/BaseLoadingComponent'
 import ProductToolbar from './product-toolbar'
 import ContainerUnit from './ContainerUnit'
+import imageCompression from 'browser-image-compression';
 
 const ProductNameFieldName = 'ProductName';
 const ProductPriceFieldName = 'ProductPrice';
@@ -559,14 +560,21 @@ class ProductIndex extends RxComponent {
                   })
                 return;
             }
+            const options = {
+                maxSizeMB: -10,
+                maxWidthOrHeight: 1024,
+                useWebWorker: true,
+                onProgress: () => null
+            }
             var result = '';
             var reader = new FileReader()
             reader.onload=()=>{
                 result = reader.result
                 this.setState({ImageString : result})
             }
-            reader.readAsDataURL(file)
-            //this.getBase64(file, (x)=>{result = x})
+            imageCompression(file, options).then(compressedFile => {
+                reader.readAsDataURL(compressedFile)
+            });
             
         }
         this.setState({[e.target.name] : e.target.value})
