@@ -19,6 +19,11 @@ class ProductPreview extends RxComponent
         this.handleFormSubmit = this.handleFormSubmit.bind(this)
         this.renderRedirect = this.renderRedirect.bind(this)
     }
+    renderNaira=(alpha)=>{
+        return(<>
+            <div><del style={{textDecorationStyle : 'double', textDecoration : 'line-through'}}>N</del>{alpha}</div>
+        </>)
+    }
     renderPage=()=>{
         return(<>
         
@@ -99,6 +104,11 @@ class ProductPreview extends RxComponent
                         }</div>
                         </div>
                         <div className="row">
+                            <div className="col-3 text-left strong"><strong>brand:</strong></div><div className="col text-left">{
+                        this.state.Product !== undefined ? this.state.Product.Brand : ''
+                        }</div>
+                        </div>
+                        <div className="row">
                             <div className="col-3 text-left strong"><strong>description:</strong></div><div className="col text-justify text-wrap">
                             {
                         this.state.Product !== undefined ? this.state.Product.Description : ''
@@ -106,14 +116,13 @@ class ProductPreview extends RxComponent
                                 </div>
                         </div>
                         <div className="row">
-                            <div className="col-3 text-left strong"><strong>cost price:</strong></div><div className="col text-left">{
-                        this.state.Product !== undefined ? '=N='+this.state.Product.Cost : ''
-                        }</div>
+                            <div className="col-3 text-left strong"><strong>cost price:</strong></div>
+                            <div className="col text-left">{this.renderNaira(this.state.Product !== undefined ? this.state.Product.Cost : '')}
+                            </div>
                         </div>
                         <div className="row">
-                            <div className="col-3 text-left strong"><strong>selling price:</strong></div><div className="col text-left">{
-                        this.state.Product !== undefined ? '=N='+this.state.Product.Price : ''
-                        }</div>
+                            <div className="col-3 text-left strong"><strong>selling price:</strong></div>
+                            <div className="col text-left">{this.renderNaira(this.state.Product !== undefined ? this.state.Product.Price : '')}</div>
                         </div>
                         <div className="row">
                             <div className="col-3 text-left strong"><strong>unit:</strong></div><div className="col text-left">{
@@ -135,9 +144,9 @@ class ProductPreview extends RxComponent
                             }</div>
                         </div>
                         <div className="row">
-                        <div className="col-3 text-left strong"><strong>discount price:</strong></div><div className="col text-left">{
-                            this.state.Product !== undefined ? this.state.Product.DiscountPrice : ''
-                        }</div>
+                        <div className="col-3 text-left strong"><strong>discount price:</strong></div>
+                        <div className="col text-left">{this.renderNaira(this.state.Product !== undefined ? this.state.Product.DiscountPrice : '')}
+                        </div>
                         </div>
                         <div className="row">
                             <div className="col-3 text-left strong"><strong>tags:</strong></div><div className="col text-left text-wrap">

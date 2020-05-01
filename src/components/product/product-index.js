@@ -12,6 +12,7 @@ import ContainerUnit from './ContainerUnit'
 import imageCompression from 'browser-image-compression';
 
 const ProductNameFieldName = 'ProductName';
+const ProductBrandFieldName = 'ProductBrand';
 const ProductPriceFieldName = 'ProductPrice';
 const ContainerUnitFieldName = 'ContainerUnit'
 const DescriptionFieldName = 'Description';
@@ -19,6 +20,7 @@ const ProductNameMinLength = 5;
 const ProductNameMaxLength = 30;
 const ProductPriceMinValue = 0;
 const ProductNameInvalidErrorMessage = `Product Name must be between ${ProductNameMinLength} - ${ProductNameMaxLength} characters`;
+const ProductBrandInvalidErrorMessage = `Product Brand must be between ${ProductNameMinLength} - ${ProductNameMaxLength} characters`;
 const ProductPriceInvalidErrorMessage = `Product must have a price greater than ${ProductPriceMinValue}`;
 const DescriptionInvalidErrorMessage = `Product must have a description`;
 const ContainerUnitErrorMessage = `A sale unit must be specified`;
@@ -47,6 +49,7 @@ class ProductIndex extends RxComponent {
             Description : data !== null ? data.Description : '',
             ErrorMessage : {
                 ProductName : '',
+                ProductBrand : '',
                 ProductPrice : '',
                 ProductCost : '',
                 ContainerUnit : '',
@@ -59,6 +62,7 @@ class ProductIndex extends RxComponent {
             },
             ControlValid : {
                 ProductName : data !== null && data.Name !== null?true : false,
+                ProductBrand : data !== null && data.Brand !== null?true : false,
                 ProductPrice : data !== null && data.Price !== null?true : false,
                 ProductCost : false,
                 ContainerUnit : data !== null && data.Unit !== null?true : false,
@@ -119,7 +123,7 @@ class ProductIndex extends RxComponent {
         <div className="form form-group container-login100" style = {{backgroundImage: `url(${LoginBackground})`}}>
         <div className = "card-body wrap-login100 p-l-55 p-r-55 p-t-80 p-b-30" >
             <div className="row">
-        <legend><center><h2><b>Product Setup </b></h2></center></legend>
+        <legend><center><h2><b>Add New Product </b></h2></center></legend>
         </div>
         
         <div className="row">
@@ -165,6 +169,37 @@ class ProductIndex extends RxComponent {
                 }
                 errorMessage = {
                     this.state.ErrorMessage !== undefined ? this.state.ErrorMessage.ProductName : ''
+                } >
+                </InputField>
+                <InputField className = {
+                    "text-center"
+                }
+                type = {
+                    "text"
+                }
+                placeholder = {
+                    "product brand...."
+                }
+                id = {
+                    ProductBrandFieldName
+                }
+                name = {
+                    'Product Brand'
+                }
+                fontAwesomeIcon = {
+                    "fas fa-info"
+                }
+                value = {
+                    this.state.ProductBrand
+                }
+                onChange = {
+                    this.handleUserInput
+                }
+                isValidProperty = {
+                    this.state.ControlValid !== undefined ? this.state.ControlValid.ProductBrand : false
+                }
+                errorMessage = {
+                    this.state.ErrorMessage !== undefined ? this.state.ErrorMessage.ProductBrand : ''
                 } >
                 </InputField>
                 <InputField type = {
@@ -461,6 +496,7 @@ class ProductIndex extends RxComponent {
     ViewPreview=(e)=>{
         var data = {
             Name : this.state.ProductName,
+            Brand : this.state.ProductBrand,
             Cost : this.state.ProductCost,
             IsPrescription : this.state.IsPrescription,
             Price : this.state.ProductPrice,
@@ -475,7 +511,7 @@ class ProductIndex extends RxComponent {
         this.HandleRedirect('/product-preview/', data)
     }
     ClearForm=()=>{        
-            this.setState({ProductName : '',
+            this.setState({ProductName : '', ProductBrand : '',
             ProductCost : 0,
             IsPrescription : '',
             ProductPrice : 0,
@@ -498,6 +534,7 @@ class ProductIndex extends RxComponent {
             try{
                 var data = {
                     Name : this.state.ProductName,
+                    Brand : this.state.ProductBrand,
                     ImageString : this.state.ImageString,
                     Cost : this.state.ProductCost,
                     Price : this.state.ProductPrice,
@@ -583,6 +620,7 @@ class ProductIndex extends RxComponent {
     validateForm() {
         this.setState({
             formValid: this.state.ControlValid.ProductName &&
+            this.state.ControlValid.ProductBrand &&
             this.state.ControlValid.ProductPrice &&
             this.state.ControlValid.ContainerUnit &&
             this.state.ControlValid.Description
@@ -591,6 +629,7 @@ class ProductIndex extends RxComponent {
     ValidateControls=(fieldName, value)=>{
         let fieldValidationErrors = this.state.ErrorMessage;
         let productNameValid = this.state.ControlValid.ProductName;
+        let productBrandValid = this.state.ControlValid.ProductBrand;
         let productPriceValid = this.state.ControlValid.ProductPrice;
         let descriptionValid = this.state.ControlValid.Description;
         let containerUnitValid = this.state.ControlValid.ContainerUnit;
@@ -599,6 +638,10 @@ class ProductIndex extends RxComponent {
             case ProductNameFieldName:
                 productNameValid = value.length >= ProductNameMinLength && value.length <= ProductNameMaxLength;
                 fieldValidationErrors.ProductName = productNameValid ? '' : ProductNameInvalidErrorMessage;
+                break;
+            case ProductBrandFieldName:
+                productBrandValid = value.length >= ProductNameMinLength && value.length <= ProductNameMaxLength;
+                fieldValidationErrors.ProductBrand = productBrandValid ? '' : ProductBrandInvalidErrorMessage;
                 break;
             case ProductPriceFieldName:
                 productPriceValid = value > 0;
@@ -617,6 +660,7 @@ class ProductIndex extends RxComponent {
         }
         var ControlValid = this.state.ControlValid;
         ControlValid.ProductName = productNameValid
+        ControlValid.ProductBrand = productBrandValid
         ControlValid.ProductPrice = productPriceValid
         ControlValid.Description = descriptionValid
         ControlValid.ContainerUnit = containerUnitValid

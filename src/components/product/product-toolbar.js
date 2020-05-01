@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import './toolbar.css'
 
-class ProductToolBar extends Component{f
+class ProductToolBar extends Component{
     constructor(props)
     {
         super(props)
@@ -69,7 +69,7 @@ class ProductToolBar extends Component{f
     RenderClear=()=>{
         if(this.state.clearDisabled !== true)
         {
-            return <a href="#/" title="clear" onClick={this.state.clearAction}><i class="fas fa-eraser"></i></a>
+            return <a href="#/" title="clear" onClick={this.state.clearAction}><i class="fas fa-times"></i></a>
         }
     }
     render(){
@@ -88,6 +88,7 @@ class ProductToolBar extends Component{f
             {this.RenderDelete()}
             {this.RenderClear()}
             {this.RenderBack()}
+            
             {/* <a href="" title="clear"><i class="fas fa-trash"  onClick={this.state.deleteAction} disabled={this.state.deleteDisabled}></i></a>  */}
         </div>
         </div>

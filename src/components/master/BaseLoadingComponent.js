@@ -15,10 +15,16 @@ class BaseLoadingComponent extends Component{
                 IsLoading : true,
                 Redirect : false,
                 RedirectPath : '/',
+                pagingParams: {
+                    page: 1,
+                    pageSize: 5,
+                    totalItemsCount: 0
+                },
                 ComponentFunction : props.ComponentFunction,
-                ComponentLoadingMethod : props.ComponentLoadingMethod,
+                //ComponentLoadingMethod : props.ComponentLoadingMethod,
                 RedirectParams : {}
         }
+        this.componentWillMount = this.componentWillMount.bind(this)
         this.TestAdd = this.TestAdd.bind(this)        
     }
     PageRoles = []
@@ -32,7 +38,7 @@ class BaseLoadingComponent extends Component{
     componentWillMount(){
         var state = this.ValidateRoles();
         this.setState({IsInRole : state})
-        return this.state.ComponentLoadingMethod;
+        //return this.state.ComponentLoadingMethod;
         //this.setState({Product : data})
     }
     HandleRedirect=(path, RedirectParams)=>{
