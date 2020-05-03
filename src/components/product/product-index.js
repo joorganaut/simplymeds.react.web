@@ -35,6 +35,7 @@ class ProductIndex extends RxComponent {
             testValue : 0,
             Roles : props.Roles,
             Redirect : {},
+            ProductID : data !== null?data.ID : 0,
             ProductName : data !== null?data.Name: '',
             ProductBrand : data !== null?data.Brand:'',
             ProductPrice : data !== null?data.Price: 0,
@@ -90,7 +91,8 @@ class ProductIndex extends RxComponent {
         this.setState({
             IsLoading: true
         })
-        await Axios.post(process.env.REACT_APP_MIDDLEWARE + '/api/AddProductDetails', data).then(async res => {
+        var method = data.ID > 0 ? '/api/UpdateProductDetails' : '/api/AddProductDetails'
+        await Axios.post(process.env.REACT_APP_MIDDLEWARE + method, data).then(async res => {
             if (res.data.Code === '00') {
                 await swal({
                     title: "Success!",
@@ -495,6 +497,7 @@ class ProductIndex extends RxComponent {
     
     ViewPreview=(e)=>{
         var data = {
+            ID : this.state.ProductID,
             Name : this.state.ProductName,
             Brand : this.state.ProductBrand,
             Cost : this.state.ProductCost,
@@ -505,7 +508,9 @@ class ProductIndex extends RxComponent {
             Tags : this.state.Tags,
             Image : this.state.ImageString,
             IsDiscounted : this.state.IsDiscounted,
-            DiscountPrice : this.state.DiscountPrice
+            DiscountPrice : this.state.DiscountPrice,
+            BackUrl : '/product-details/',
+            IsEdit: false,
         }
         localStorage.setItem('ProductData', JSON.stringify(data))
         this.HandleRedirect('/product-preview/', data)
@@ -527,12 +532,13 @@ class ProductIndex extends RxComponent {
     }
     
     ViewAllProducts=(e)=>{
-        this.HandleRedirect('/product-all/', {})
+        this.HandleRedirect('/product-all/', {BackUrl : '/product-details/'})
     }
     handleFormSubmit = (e) => {
         if (this.state.FormIsValid) {
             try{
                 var data = {
+                    ID : this.state.ProductID,
                     Name : this.state.ProductName,
                     Brand : this.state.ProductBrand,
                     ImageString : this.state.ImageString,

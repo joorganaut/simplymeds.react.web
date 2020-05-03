@@ -11,12 +11,13 @@ class ProductPreview extends RxComponent
         var data = JSON.parse(localStorage.getItem('ProductData'))
         super(props)
         this.state = {
+            IsEdit : data.IsEdit,
+            BackUrl : data.BackUrl,
             Product : data,
             Roles : props.Roles,
             ComponentFunction : this.renderPage(),
         }
         this.PageRoles.push("InventoryManager")
-        this.handleFormSubmit = this.handleFormSubmit.bind(this)
         this.renderRedirect = this.renderRedirect.bind(this)
     }
     renderNaira=(alpha)=>{
@@ -46,10 +47,11 @@ class ProductPreview extends RxComponent
                     this.handleSubmitForm
                 } class="well form-horizontal">
                     <ProductToolbar 
-                    homeAction={this.GoHome}
+                    clearDisabled={true}   
+                    homeAction={()=>{this.GoHome('/product-details/#/')}}
                     saveAction={this.SaveForm} 
                     previewDisabled={true}
-                    backAction={this.GoBack}
+                    backAction={()=>this.GoBack(this.state.BackUrl)}
                     previewAction={this.ViewPreview} 
                     searchAction={this.ViewAllProducts}>
                     </ProductToolbar>
@@ -99,33 +101,33 @@ class ProductPreview extends RxComponent
                         }}>
                         {/* details column */}
                         <div className="row">
-                            <div className="col-3 text-left strong"><strong>name:</strong></div><div className="col text-left">{
+                            <div className="col-4 text-left strong"><strong>name:</strong></div><div className="col text-left">{
                         this.state.Product !== undefined ? this.state.Product.Name : ''
                         }</div>
                         </div>
                         <div className="row">
-                            <div className="col-3 text-left strong"><strong>brand:</strong></div><div className="col text-left">{
+                            <div className="col-4 text-left strong"><strong>brand:</strong></div><div className="col text-left">{
                         this.state.Product !== undefined ? this.state.Product.Brand : ''
                         }</div>
                         </div>
                         <div className="row">
-                            <div className="col-3 text-left strong"><strong>description:</strong></div><div className="col text-justify text-wrap">
+                            <div className="col-4 text-left strong"><strong>description:</strong></div><div className="col text-justify text-wrap">
                             {
                         this.state.Product !== undefined ? this.state.Product.Description : ''
                         }
                                 </div>
                         </div>
                         <div className="row">
-                            <div className="col-3 text-left strong"><strong>cost price:</strong></div>
+                            <div className="col-4 text-left strong"><strong>cost price:</strong></div>
                             <div className="col text-left">{this.renderNaira(this.state.Product !== undefined ? this.state.Product.Cost : '')}
                             </div>
                         </div>
                         <div className="row">
-                            <div className="col-3 text-left strong"><strong>selling price:</strong></div>
+                            <div className="col-4 text-left strong"><strong>selling price:</strong></div>
                             <div className="col text-left">{this.renderNaira(this.state.Product !== undefined ? this.state.Product.Price : '')}</div>
                         </div>
                         <div className="row">
-                            <div className="col-3 text-left strong"><strong>unit:</strong></div><div className="col text-left">{
+                            <div className="col-4 text-left strong"><strong>unit:</strong></div><div className="col text-left">{
                         this.state.Product !== undefined 
                         ? ContainerUnit.filter(x=> this.state.Product.Unit)[0] !== undefined
                         ? ContainerUnit.filter(x=> this.state.Product.Unit)[0].Name 
@@ -134,22 +136,22 @@ class ProductPreview extends RxComponent
                         }</div>
                         </div>
                         <div className="row">
-                            <div className="col-3 text-left strong"><strong>prescription:</strong></div><div className="col text-left">{
+                            <div className="col-4 text-left strong"><strong>Requires prescription:</strong></div><div className="col text-left">{
                         this.state.Product !== undefined ? this.state.Product.IsPrescription : ''
                         }</div>
                         </div>
                         <div className="row">
-                            <div className="col-3 text-left strong"><strong>discounted:</strong></div><div className="col text-left">{
+                            <div className="col-4 text-left strong"><strong>discounted:</strong></div><div className="col text-left">{
                             this.state.Product !== undefined ? this.state.Product.IsDiscounted : ''
                             }</div>
                         </div>
                         <div className="row">
-                        <div className="col-3 text-left strong"><strong>discount price:</strong></div>
+                        <div className="col-4 text-left strong"><strong>discount price:</strong></div>
                         <div className="col text-left">{this.renderNaira(this.state.Product !== undefined ? this.state.Product.DiscountPrice : '')}
                         </div>
                         </div>
                         <div className="row">
-                            <div className="col-3 text-left strong"><strong>tags:</strong></div><div className="col text-left text-wrap">
+                            <div className="col-4 text-left strong"><strong>tags:</strong></div><div className="col text-left text-wrap">
                             {
                         this.state.Product !== undefined ? this.state.Product.Tags : ''
                         }
@@ -168,18 +170,8 @@ class ProductPreview extends RxComponent
         </div>
         </>)
     }
-    handleFormSubmit=(e)=>{
-
-    }
-    handleUserInput=(e)=>{
-        this.setState({[e.target.name] : e.target.value})
-        this.ValidateControls(e.target.name, e.target.value)
-    }
     GoBack=()=>{
-        this.HandleRedirect('/product-details/')
-    }
-    ValidateControls=(name, value)=>{
-
+        this.HandleRedirect(this.state.BackUrl)
     }
     render(){
         return(<>

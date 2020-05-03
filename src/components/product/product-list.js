@@ -15,12 +15,15 @@ import LoginBackground from "../master/Pharmacy/images/bg-01_old.jpg";
 import { Redirect } from 'react-router-dom';
 import { relativeTimeThreshold } from 'moment';
 import ContainerUnit from './ContainerUnit'
-
+import MiddlewareManager from '../master/MiddlewareManager'
+let manager = new MiddlewareManager()
 class ProductList extends RxComponent{
     constructor(props) {
         super(props)
         this.state = {
             Products : [],
+            BackUrl: '',
+            ViewDetail : 0,
             Roles: props.Roles,
             IsLoading : true,
             ComponentFunction: this.renderPage(),
@@ -30,12 +33,12 @@ class ProductList extends RxComponent{
                 totalItemsCount: 0
             },
             searchParams:{
-                name : '',
-                brand : '',
-                prescription : null,
-                discounted : null,
-                tags : '',
-                cost : 0
+                Name : '',
+                Brand : '',
+                IsPrescription : '',
+                Discounted : '',
+                Tags : '',
+                Price : 0
             }
         }
         this.PageRoles.push("InventoryManager")
@@ -45,6 +48,7 @@ class ProductList extends RxComponent{
     }
     async componentDidMount() {
         var values = []
+        await this.setState({IsLoading : true}, ()=>{})
         var x = await this.GetAllProducts()
         if (x !== null && x.length > 0) {
             values = x.map(obj =>
@@ -61,20 +65,62 @@ class ProductList extends RxComponent{
                 })
             )
         }
-        this.setState({
+        await this.setState({
             Products: values
         })
-        this.setState({
-            Reload: true
-        })
-        this.setState({
+        // await this.setState({
+        //     Reload: true
+        // })
+        await this.setState({
             IsLoading: false
         })
-        this.setState({
-            Reload: false
-        })
+        // await this.setState({
+        //     Reload: false
+        // })
     }
-    handleUserInput=()=>{
+    ViewPreview = async (e) => {
+        var data = {}
+        //Get Actual Product 
+        var postData = {
+            ID: this.state.ViewDetail
+        }
+        await manager.PostData(postData, '/api/RetrieveProductDetails', (response) => {
+            if (response.data.Code === '00') {
+                var res = response.data.record
+                var image = response.data.image
+                data = {
+                    ID : res.ID,
+                    Name: res.Name,
+                    Brand: res.Brand,
+                    Cost: res.Cost,
+                    IsPrescription: res.RequiresPrescription === null?'false':res.RequiresPrescription.toString(),
+                    Price: res.Price,
+                    Unit: res.ContainerUnit.toString(),
+                    Description: res.Description,
+                    Tags: res.Tags,
+                    Image: image,
+                    IsDiscounted: res.Discounted === null?'false':res.Discounted.toString(),
+                    DiscountPrice: res.DiscountPrice,
+                    BackUrl: '/product-all/#/',
+                    IsEdit: true,
+                }
+                localStorage.setItem('ProductData', JSON.stringify(data))
+                this.HandleRedirect('/product-preview/', data)
+            }
+            else{
+                swal({
+                    title: "Failure!",
+                    text: "Oops!! seems something terrible happened "+res.data.Message,
+                    icon: "error",
+                    button: {
+                        text: "Ok",
+                        closeModal: true,
+                    },
+                    dangerMode: true
+                })
+            }
+        })
+
 
     }
     GetAllProducts = async () => {
@@ -86,7 +132,8 @@ class ProductList extends RxComponent{
               pageSize : this.state.pagingParams.pageSize,
               sort : 'ID',
               dir : 'asc'
-            }
+            },
+            query:this.state.searchParams
         }
         try {
             await Axios.post(process.env.REACT_APP_MIDDLEWARE + '/api/AllProducts', data).then(res => {
@@ -119,7 +166,7 @@ class ProductList extends RxComponent{
                 } else {
                     swal({
                         title: "Error!",
-                        text: "Unable to get products: " + res.data.Messages,
+                        text: "Unable to get products: " + res.data.Message,
                         icon: "error",
                         button: {
                             text: "Ok",
@@ -180,14 +227,25 @@ class ProductList extends RxComponent{
                         : item[col.heading]
                       }
                       </td>)}
-                      <td><button className="btn btn-secondary shadow" title="view details"><i className="fas fa-info-circle"></i></button></td>
+                      <td><button className="btn btn-secondary shadow" title="view details" value={item['ID']} onClick={async(e)=>{await this.setState({ViewDetail : item['ID']}); this.ViewPreview(e)}}><i value={item['ID']} className="fas fa-info-circle"></i></button></td>
                       <td><button className="btn btn-danger shadow" title="delete" id={item['ID']} value={item['ID']} name={item['ID']+'del-btn'} onClick={this.HandleDelete}><i className="fas fa-trash"></i></button></td>
                   </tr>
               ) : <></>}
           </tbody></>
         );
     };
-    handleFormSubmit=()=>{}
+    handleFormSubmit=async (params)=>{
+        var pagingParams = this.state.pagingParams
+        pagingParams.page = 1;
+        await this.setState({pagingParams : pagingParams}, ()=>{})
+        await this.setState({IsLoading: true}, ()=>{}) 
+        await this.setState({searchParams : params}, ()=>{})
+        await this.componentDidMount();
+        await this.setState({
+        IsLoading: false
+        }, ()=>{});
+    }
+    
     handlePageChange=(e)=>{
         this.setState({
           IsLoading: true
@@ -203,18 +261,18 @@ class ProductList extends RxComponent{
         <div className="form form-group container-login100" style = {{backgroundImage: `url(${LoginBackground})`}}>
         <div className = "card-body wrap-login100 p-l-55 p-r-55 p-t-80 p-b-30" >
         <legend><center><h2><b>View All Products</b></h2></center></legend>
-        <ProductToolbar 
-                    homeAction={this.GoHome}
+        <ProductToolbar       
+                    clearDisabled={true}              
+                    homeAction={()=>{ localStorage.removeItem('ProductData'); this.GoHome('/product-details/#/')}}
                     saveAction={this.handleFormSubmit} 
                     clearAction={this.ClearForm}
                     previewAction={this.ViewPreview} 
+                    backAction={()=>this.GoBack(this.state.BackUrl)}
                     searchAction={this.ViewAllProducts}></ProductToolbar>
-
-                   
                     <fieldset>
                     <center>
                     <div className="form-group text-center justify-content-center ">
-                    <ProductSearchbar></ProductSearchbar>
+                    <ProductSearchbar SearchAction={this.handleFormSubmit}></ProductSearchbar>
         <Table variant="light" striped bordered hover size='md' className="col-lg-4 col-md-4 col-sm-8">
         {this.buildTable([
             {heading : 'ID'}, 

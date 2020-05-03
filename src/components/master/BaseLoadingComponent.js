@@ -32,8 +32,8 @@ class BaseLoadingComponent extends Component{
     TestAdd(){
         
     }
-    GoHome=()=>{
-        this.HandleRedirect('/')
+    GoHome=(path)=>{
+        this.HandleRedirect(path !== null && path !== undefined ? path : '/')
     }
     componentWillMount(){
         var state = this.ValidateRoles();
