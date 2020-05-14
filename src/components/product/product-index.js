@@ -517,6 +517,7 @@ class ProductIndex extends RxComponent {
     }
     ClearForm=()=>{        
             this.setState({ProductName : '', ProductBrand : '',
+            ID : 0,
             ProductCost : 0,
             IsPrescription : '',
             ProductPrice : 0,
