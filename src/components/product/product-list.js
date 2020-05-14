@@ -61,10 +61,16 @@ class ProductList extends RxComponent{
                     Unit: obj.ContainerUnit,
                     Prescription: obj.RequiresPrescription,
                     Discounted: obj.Discounted,
-                    DiscountedPrice: obj.DiscountPrice
+                    DiscountedPrice: obj.DiscountPrice,
+                    Stock: obj.stock !== null ? obj.stock : 0,
                 })
             )
         }
+        // values.forEach(async x=>{
+        //     await this.GetProductStockAndImage(x.ID, async(y)=>{
+        //         x.Stock = y !== undefined && y.record !== undefined ? y.record.Stock : 0
+        //     })
+        // })
         await this.setState({
             Products: values
         })
@@ -191,6 +197,33 @@ class ProductList extends RxComponent{
         }
         return result;
       }
+
+      GetProductStockAndImage = async (id, callback) => {
+        var result = {
+            error : '',
+            record: {}
+        };
+        var data = {            
+            ProductID : id
+        }
+        try {
+            await Axios.post(process.env.REACT_APP_MIDDLEWARE + '/api/RetrieveProductStockAndImage', data).then(res => {
+                if (res.data.Code === '00') {
+                    if (res.data.record !== null) {
+                        result.record = res.data.record;
+                        callback(result)
+                    }else{
+                        result.error = 'unable to fetch details'
+                    }
+                } else {
+                    result.error = 'unable to fetch detail ' + res.data.Message
+                }
+            })//.done()
+        } catch (e) {
+            result.error = 'unable to fetch detail ' + e.message            
+        }
+        return result;
+      }
     buildTable = (columns, data, propertyAsKey) => {
         return (<>
         <thead>
@@ -283,7 +316,8 @@ class ProductList extends RxComponent{
         {heading : 'Unit'},
         {heading : 'Prescription'},
         {heading : 'Discounted'},
-        {heading : 'DiscountedPrice'}],
+        {heading : 'DiscountedPrice'},
+        {heading : 'Stock'}],
          this.state.Products, 'ID')}
         </Table>
        <div className="pagination">
